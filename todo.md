@@ -1,0 +1,27 @@
+# Cosas pendientes
+
+- [ ] Añadir comandos de moderación
+  - [ ] `ban`
+    - [ ] `por respuesta a un message`
+    - [ ] `por user_id`
+    - [ ] `por @username`
+    - [ ] `por first_name`
+  - [ ] `unban`
+      - [ ] `por respuesta a un message`
+      - [ ] `por user_id`
+      - [ ] `por @username`
+      - [ ] `por first_name` 
+  - [ ] `mute`
+      - [ ] `por respuesta a un message`
+      - [ ] `por user_id`
+      - [ ] `por @username`
+      - [ ] `por first_name`
+  - [ ] `unmute`
+      - [ ] `por respuesta a un message`
+      - [ ] `por user_id`
+      - [ ] `por @username`
+      - [ ] `por first_name`
+- [ ] Añadir comandos de docs para Lenguajes de Programación
+  - [ ] `Rust` 
+  - [ ] `C#`
+- [ ] Añadir conexión a Base de Datos
