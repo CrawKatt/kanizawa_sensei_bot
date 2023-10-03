@@ -1,12 +1,33 @@
+use crate::{
+    commands::{
+        common::{
+            csharp,
+            help,
+            rust,
+        },
+        fun::send,
+    },
+    enums::{
+        BotCommonCommands,
+        DocsCommands,
+        FunCommands,
+    },
+    prelude::Bot,
+};
 use teloxide::utils::command::BotCommands;
-use teloxide_core::requests::ResponseResult;
-use teloxide_core::types::{Me, Message};
-use crate::commands::common::{csharp, help, rust};
-use crate::commands::fun::send;
-use crate::enums::{BotCommonCommands, DocsCommands, FunCommands};
-use crate::prelude::Bot;
+use teloxide_core::{
+    requests::ResponseResult,
+    types::{
+        Me,
+        Message,
+    },
+};
 
-pub async fn common_command_handler(bot: Bot, msg: Message, me: Me) -> ResponseResult<()> {
+pub async fn common_command_handler(
+    bot: Bot,
+    msg: Message,
+    me: Me,
+) -> ResponseResult<()> {
     let Some(text) = msg.text() else {
         return Ok(())
     };
@@ -18,10 +39,13 @@ pub async fn common_command_handler(bot: Bot, msg: Message, me: Me) -> ResponseR
     }
 
     Ok(())
-
 }
 
-pub async fn docs_command_handler(bot: Bot, msg: Message, me: Me) -> ResponseResult<()> {
+pub async fn docs_command_handler(
+    bot: Bot,
+    msg: Message,
+    me: Me
+) -> ResponseResult<()> {
     let Some(text) = msg.text() else {
         return Ok(())
     };
@@ -35,7 +59,11 @@ pub async fn docs_command_handler(bot: Bot, msg: Message, me: Me) -> ResponseRes
     Ok(())
 }
 
-pub async fn fun_command_handler(bot: Bot, msg: Message, me: Me) -> ResponseResult<()> {
+pub async fn fun_command_handler(
+    bot: Bot,
+    msg: Message,
+    me: Me
+) -> ResponseResult<()> {
     let Some(text) = msg.text() else {
         return Ok(())
     };
@@ -50,11 +78,9 @@ pub async fn fun_command_handler(bot: Bot, msg: Message, me: Me) -> ResponseResu
 }
 
 pub async fn for_database(msg: Message) -> ResponseResult<()> {
-    let Some(_) = msg.text() else {
-        return Ok(())
-    };
+    let Some(_) = msg.text() else { return Ok(()) };
 
-    //insert_user_to_sql(&msg).await?;
+    // insert_user_to_sql(&msg).await?;
 
     Ok(())
 }

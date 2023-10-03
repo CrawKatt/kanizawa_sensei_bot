@@ -1,12 +1,12 @@
-use dotenv::dotenv;
 use crate::prelude::*;
+use dotenv::dotenv;
 
-mod utils;
-mod error;
-mod prelude;
-mod enums;
-mod handlers;
 mod commands;
+mod enums;
+mod error;
+mod handlers;
+mod prelude;
+mod utils;
 
 #[tokio::main]
 async fn main() {
@@ -16,4 +16,3 @@ async fn main() {
 
     run().await;
 }
-

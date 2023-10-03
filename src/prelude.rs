@@ -1,26 +1,34 @@
-use teloxide::dispatching::UpdateFilterExt;
-use teloxide_core::adaptors::DefaultParseMode;
-use teloxide_core::types::{ChatMemberUpdated, ParseMode, Update};
-use crate::handlers::command::common_command_handler;
-use teloxide::dptree;
-use teloxide::prelude::Dispatcher;
-use teloxide_core::prelude::RequesterExt;
-use crate::handlers::chat_member_updates::{left_chat_member, new_chat_member};
+use crate::handlers::{
+    chat_member_updates::{
+        left_chat_member,
+        new_chat_member,
+    },
+    command::common_command_handler,
+};
+use teloxide::{
+    dispatching::UpdateFilterExt,
+    dptree,
+    prelude::Dispatcher,
+};
+use teloxide_core::{
+    adaptors::DefaultParseMode,
+    prelude::RequesterExt,
+    types::{
+        ChatMemberUpdated,
+        ParseMode,
+        Update,
+    },
+};
 
 pub type Bot = DefaultParseMode<teloxide::Bot>;
 
 pub async fn run() {
-
     let bot = teloxide::Bot::from_env().parse_mode(ParseMode::Html);
-
     let handler = dptree::entry()
-        .inspect(|_u: Update| {
-            //println!("Update: {u:#?}");
+        .inspect(|u: Update| {
+            eprintln!("Update: {u:#?}");
         })
-        .branch(
-        Update::filter_message()
-             .endpoint(common_command_handler)
-        )
+        .branch(Update::filter_message().endpoint(common_command_handler))
         .branch(
             Update::filter_chat_member()
                 .branch(
