@@ -1,8 +1,16 @@
-use std::time::Duration;
-use teloxide_core::prelude::{ChatId, Requester};
-use teloxide_core::types::{Message, MessageId};
-use tokio::time::sleep;
 use crate::prelude::Bot;
+use std::time::Duration;
+use teloxide_core::{
+    prelude::{
+        ChatId,
+        Requester,
+    },
+    types::{
+        Message,
+        MessageId,
+    },
+};
+use tokio::time::sleep;
 
 pub trait Timer {
     fn delete_message_timer(
@@ -11,7 +19,7 @@ pub trait Timer {
         chat_id: ChatId,
         ok_or_err: MessageId,
         msg_id: MessageId,
-        secs: u64
+        secs: u64,
     );
 }
 
@@ -22,7 +30,7 @@ impl Timer for Message {
         chat_id: ChatId,
         ok_or_err: MessageId,
         msg_id: MessageId,
-        secs: u64
+        secs: u64,
     ) {
         tokio::spawn(async move {
             sleep(Duration::from_secs(secs)).await;
