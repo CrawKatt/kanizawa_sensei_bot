@@ -21,6 +21,17 @@ pub enum BotCommonCommands {
 pub enum DocsCommands {
     Rust,
     Csharp,
+    Cpp,
+    C,
+    Java,
+    Python,
+    Kotlin,
+    Javascript,
+    Typescript,
+    Php,
+    Go,
+    Ruby,
+    Lua,
 }
 
 #[derive(BotCommands, Clone, Debug)]
