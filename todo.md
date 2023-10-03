@@ -13,6 +13,7 @@
       - [ ] `por first_name` 
   - [ ] `mute`
       - [ ] `por respuesta a un message`
+        - [ ] `por respuesta a un event join (<user> se ha unido al grupo>)` 
       - [ ] `por user_id`
       - [ ] `por @username`
       - [ ] `por first_name`
@@ -21,7 +22,8 @@
       - [ ] `por user_id`
       - [ ] `por @username`
       - [ ] `por first_name`
-- [ ] Añadir comandos de docs para Lenguajes de Programación
-  - [ ] `Rust` 
-  - [ ] `C#`
+- [x] Añadir comandos de docs para Lenguajes de Programación
+  - [x] `Rust` 
+  - [x] `C#`
+- [ ] Añadir docs para comandos de C#
 - [ ] Añadir conexión a Base de Datos
