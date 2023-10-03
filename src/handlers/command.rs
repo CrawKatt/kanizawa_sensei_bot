@@ -6,31 +6,46 @@ use crate::commands::fun::send;
 use crate::enums::{BotCommonCommands, DocsCommands, FunCommands};
 use crate::prelude::Bot;
 
-pub async fn handler(bot: Bot, msg: Message, me: Me) -> ResponseResult<()> {
+pub async fn common_command_handler(bot: Bot, msg: Message, me: Me) -> ResponseResult<()> {
     let Some(text) = msg.text() else {
         return Ok(())
     };
 
-    // This is Cursed LOL
-    match BotCommands::parse(text, me.username()).as_ref() {
+    match BotCommands::parse(text, me.username()) {
         Ok(BotCommonCommands::Start) => rust(bot, msg).await?,
         Ok(BotCommonCommands::Help) => help(bot, msg).await?,
-        _ => {
-            match BotCommands::parse(text, me.username()) {
-                Ok(DocsCommands::Rust) => rust(bot, msg).await?,
-                Ok(DocsCommands::Csharp) => csharp(bot, msg).await?,
-                _ => {
-                    let Ok(FunCommands::Send) = BotCommands::parse(text, me.username()) else {
-                        return Ok(())
-                    };
-                    send(bot, msg).await?;
-                },
-            }
-        },
+        _ => docs_command_handler(bot, msg, me).await?,
     }
 
     Ok(())
 
+}
+
+pub async fn docs_command_handler(bot: Bot, msg: Message, me: Me) -> ResponseResult<()> {
+    let Some(text) = msg.text() else {
+        return Ok(())
+    };
+
+    match BotCommands::parse(text, me.username()) {
+        Ok(DocsCommands::Rust) => rust(bot, msg).await?,
+        Ok(DocsCommands::Csharp) => csharp(bot, msg).await?,
+        _ => fun_command_handler(bot, msg, me).await?,
+    };
+
+    Ok(())
+}
+
+pub async fn fun_command_handler(bot: Bot, msg: Message, me: Me) -> ResponseResult<()> {
+    let Some(text) = msg.text() else {
+        return Ok(())
+    };
+
+    match BotCommands::parse(text, me.username()) {
+        Ok(FunCommands::Send) => send(bot, msg).await?,
+        _ => for_database(msg).await?,
+    };
+
+    Ok(())
 }
 
 pub async fn for_database(msg: Message) -> ResponseResult<()> {
