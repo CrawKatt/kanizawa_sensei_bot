@@ -40,10 +40,11 @@ pub async fn fun_command_handler(bot: Bot, msg: Message, me: Me) -> ResponseResu
         return Ok(())
     };
 
-    match BotCommands::parse(text, me.username()) {
-        Ok(FunCommands::Send) => send(bot, msg).await?,
-        _ => for_database(msg).await?,
+    let Ok(FunCommands::Send) = BotCommands::parse(text, me.username()) else {
+        for_database(msg).await?;
+        return Ok(())
     };
+    send(bot, msg).await?;
 
     Ok(())
 }
