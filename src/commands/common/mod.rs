@@ -20,8 +20,12 @@ pub async fn rust(bot: Bot, msg: Message) -> ResponseResult<()> {
     let path = format!("docs/rust/{concept}.md");
 
     if let Ok(data) = std::fs::read_to_string(&path) {
-        let ok = bot.send_message(msg.chat.id, data).parse_mode(MarkdownV2).await?;
-        ok.delete_message_timer(bot, msg.chat.id, ok.id, msg.id, 5);
+        let ok = bot
+            .send_message(msg.chat.id, data)
+            .parse_mode(MarkdownV2)
+            .await?;
+
+        ok.delete_message_timer(bot, msg.chat.id, ok.id, msg.id, 60);
     }
 
     Ok(())
@@ -40,9 +44,9 @@ pub async fn csharp(bot: Bot, msg: Message) -> ResponseResult<()> {
 
     let path = format!("docs/csharp/{concept}.md");
 
-    if let Ok(data) = std::fs::read_to_string(&path) {
+    if let Ok(data) = std::fs::read_to_string(path) {
         let ok = bot.send_message(msg.chat.id, data).parse_mode(MarkdownV2).await?;
-        ok.delete_message_timer(bot, msg.chat.id, ok.id, msg.id, 5);
+        ok.delete_message_timer(bot, msg.chat.id, ok.id, msg.id, 60);
     }
 
     Ok(())
