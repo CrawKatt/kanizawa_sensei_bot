@@ -3,9 +3,10 @@ use teloxide::utils::html;
 use teloxide_core::prelude::{ChatId, Requester};
 use teloxide_core::requests::ResponseResult;
 use teloxide_core::types::{InputFile, Message, ParseMode};
-use crate::prelude::Bot;
 use teloxide_core::payloads::SendAnimationSetters;
 use teloxide_core::payloads::SendMessageSetters;
+use crate::utils::Timer;
+use crate::prelude::Bot;
 
 pub async fn send(bot: Bot, msg: Message) -> ResponseResult<()> {
 
@@ -13,34 +14,34 @@ pub async fn send(bot: Bot, msg: Message) -> ResponseResult<()> {
         return Ok(())
     };
 
-    let user = msg.from().unwrap();
+    let Some(user) = msg.from() else {
+        return Ok(())
+    };
 
     let user_id = user.id;
-
     let ChatId(user_id) = ChatId::from(user_id);
-
-    let parts: Vec<&str> = text.split_whitespace().collect();
+    let parts: Vec<&str> = text
+        .split_whitespace()
+        .collect();
 
     if parts.len() < 3 {
-        bot.send_message(msg.chat.id,"Uso: /send `<action> <user>`").parse_mode(ParseMode::MarkdownV2).await?;
+        bot.send_message(msg.chat.id,"Uso: /send `<action> <user>`")
+            .parse_mode(ParseMode::MarkdownV2)
+            .await?;
         return Ok(())
     }
 
     let action = parts[1];
-
     let category_result = nekosbest::Category::from_str(action);
-
-    let random_gif = match category_result {
-        Ok(category) => nekosbest::get(category).await,
-        Err(error) => {
-            println!("Error: {error}");
-            return Ok(())
-        }
+    let Ok(category) = category_result else {
+        return Ok(())
     };
 
+    let random_gif = nekosbest::get(category).await;
     let username_target = parts[2];
-
-    let username_author = user.mention().unwrap_or_else(|| html::user_mention(user_id, user.full_name().as_str()));
+    let username_author = user
+        .mention()
+        .unwrap_or_else(|| html::user_mention(user_id, user.full_name().as_str()));
 
     let message = match action {
         "kiss" => format!("{username_author} besó a {username_target}"),
@@ -52,51 +53,29 @@ pub async fn send(bot: Bot, msg: Message) -> ResponseResult<()> {
         "punch" => format!("{username_author} le dio un puñetazo a {username_target}"),
         "shoot" => format!("{username_author} le disparó a {username_target}"),
         "yeet" => format!("{username_author} mandó a {username_target} a la punta del cerro"),
-        _ => {
-            println!("{action} no es una categoria valida");
-            return Ok(())
-        }
+        _ => format!("{action} no es una categoria valida"),
     };
 
-    let random_gif = if let Ok(gif) = random_gif {
-        Some(gif)
-    } else {
-        println!("No se pudo obtener un gif de la categoria {action}", );
+    let random_gif = random_gif.map_err(|_| ());
+
+    let Ok(random_gif) = random_gif else {
         return Ok(())
     };
 
-    bot.send_animation(msg.chat.id, InputFile::url(random_gif.unwrap().url.parse().unwrap()))
+    let gif_url = random_gif
+        .url
+        .parse();
+
+    let Ok(url) = gif_url else {
+        return Ok(())
+    };
+
+    let ok = bot.send_animation(msg.chat.id, InputFile::url(url))
         .caption(message)
         .parse_mode(ParseMode::Html)
         .await?;
 
-    /*
-    let Some(action) = msg.text() else {
-        return Ok(())
-    };
-
-    let (_, username_target) = action
-        .find(' ')
-        .map_or(
-            ("", action), |index| action.split_at(index)
-        );
-
-    let username_author = msg
-        .from()
-        .as_ref()
-        .and_then(|user| user.username.as_ref())
-        .map_or("", |username| username);
-
-    let category_result = nekosbest::Category::from_str(&action);
-
-    let random_gif = match category_result {
-        Ok(category) => nekosbest::get(category).await,
-        Err(error) => {
-            println!("Error: {}", error);
-            return Ok(())
-        }
-    };
-    */
+    ok.delete_message_timer(bot, msg.chat.id, ok.id, msg.id, 60);
 
     Ok(())
 }
