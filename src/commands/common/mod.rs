@@ -13,8 +13,7 @@ use teloxide_core::{
 };
 
 pub async fn rust(bot: Bot, msg: Message) -> ResponseResult<()> {
-    let concept = msg
-        .text()
+    let concept = msg.text()
         .unwrap_or_default()
         .split_whitespace()
         .collect::<Vec<&str>>()
@@ -24,12 +23,9 @@ pub async fn rust(bot: Bot, msg: Message) -> ResponseResult<()> {
     let path = format!("docs/rust/{concept}.md");
 
     if let Ok(data) = std::fs::read_to_string(&path) {
-        let ok = bot
-            .send_message(msg.chat.id, data)
+        bot.send_message(msg.chat.id, data)
             .parse_mode(MarkdownV2)
-            .await?;
-
-        ok.delete_message_timer(bot, msg.chat.id, ok.id, msg.id, 60);
+            .await?.delete_message_timer(bot, msg.chat.id, msg.id, 60);
     }
 
     Ok(())
@@ -47,19 +43,18 @@ pub async fn csharp(bot: Bot, msg: Message) -> ResponseResult<()> {
     let path = format!("docs/csharp/{concept}.md");
 
     if let Ok(data) = std::fs::read_to_string(path) {
-        let ok = bot
-            .send_message(msg.chat.id, data)
+        bot.send_message(msg.chat.id, data)
             .parse_mode(MarkdownV2)
-            .await?;
-        ok.delete_message_timer(bot, msg.chat.id, ok.id, msg.id, 60);
+            .await?
+            .delete_message_timer(bot, msg.chat.id, msg.id, 60);
     }
 
     Ok(())
 }
 
 pub async fn help(bot: Bot, msg: Message) -> ResponseResult<()> {
-    let ok = bot.send_message(msg.chat.id, "Todo").await?;
-    ok.delete_message_timer(bot, msg.chat.id, ok.id, msg.id, 5);
+    bot.send_message(msg.chat.id, "Todo").await?
+        .delete_message_timer(bot, msg.chat.id, msg.id, 5);
 
     Ok(())
 }
