@@ -3,7 +3,7 @@
 - [ ] Añadir comandos de moderación
   - [ ] `ban`
     - [x] `por respuesta a un message`
-    - [ ] `por user_id`
+    - [x] `por user_id`
     - [ ] `por @username`
     - [ ] `por first_name`
   - [ ] `unban`
