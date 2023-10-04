@@ -31,8 +31,10 @@ pub async fn send(bot: Bot, msg: Message) -> ResponseResult<()> {
 
     if parts.len() < 3 {
         bot.send_message(msg.chat.id, "Uso: /send `<action> <user>`")
+            .reply_to_message_id(msg.id)
             .parse_mode(ParseMode::MarkdownV2)
-            .await?;
+            .await?
+            .delete_message_timer(bot, msg.chat.id, msg.id, 5);
         return Ok(())
     }
 
@@ -42,8 +44,7 @@ pub async fn send(bot: Bot, msg: Message) -> ResponseResult<()> {
 
     let random_gif = nekosbest::get(category).await;
     let username_target = parts[2];
-    let username_author = user
-        .mention()
+    let username_author = user.mention()
         .unwrap_or_else(|| html::user_mention(user_id, user.full_name().as_str()));
 
     let message = match action {
@@ -64,13 +65,12 @@ pub async fn send(bot: Bot, msg: Message) -> ResponseResult<()> {
     let gif_url = random_gif.url.parse();
     let Ok(url) = gif_url else { return Ok(()) };
 
-    let ok = bot
-        .send_animation(msg.chat.id, InputFile::url(url))
+    bot.send_animation(msg.chat.id, InputFile::url(url))
+        .reply_to_message_id(msg.id)
         .caption(message)
         .parse_mode(ParseMode::Html)
-        .await?;
-
-    ok.delete_message_timer(bot, msg.chat.id, ok.id, msg.id, 60);
+        .await?
+        .delete_message_timer(bot, msg.chat.id, msg.id, 60);
 
     Ok(())
 }
