@@ -6,8 +6,10 @@ use crate::{
             rust,
         },
         fun::send,
+        admin::ban::banning,
     },
     enums::{
+        AdminCommands,
         BotCommonCommands,
         DocsCommands,
         FunCommands,
@@ -35,7 +37,7 @@ pub async fn common_command_handler(
     match BotCommands::parse(text, me.username()) {
         Ok(BotCommonCommands::Start) => rust(bot, msg).await?,
         Ok(BotCommonCommands::Help) => help(bot, msg).await?,
-        _ => docs_command_handler(bot, msg, me).await?,
+        _ => Box::pin(docs_command_handler(bot, msg, me)).await?,
     }
 
     Ok(())
@@ -53,8 +55,25 @@ pub async fn docs_command_handler(
     match BotCommands::parse(text, me.username()) {
         Ok(DocsCommands::Rust) => rust(bot, msg).await?,
         Ok(DocsCommands::Csharp) => csharp(bot, msg).await?,
-        _ => fun_command_handler(bot, msg, me).await?,
+        _ => admin_command_handler(bot, msg, me).await?,
     };
+
+    Ok(())
+}
+
+pub async fn admin_command_handler(
+    bot: Bot,
+    msg: Message,
+    me: Me
+) -> ResponseResult<()> {
+    let Some(text) = msg.text() else {
+        return Ok(())
+    };
+
+    match BotCommands::parse(text, me.username()) {
+        Ok(AdminCommands::Ban) => banning(bot, msg).await?,
+        _ => fun_command_handler(bot, msg, me).await?
+    }
 
     Ok(())
 }
