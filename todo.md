@@ -2,7 +2,7 @@
 
 - [ ] Añadir comandos de moderación
   - [ ] `ban`
-    - [ ] `por respuesta a un message`
+    - [x] `por respuesta a un message`
     - [ ] `por user_id`
     - [ ] `por @username`
     - [ ] `por first_name`
@@ -25,5 +25,6 @@
 - [x] Añadir comandos de docs para Lenguajes de Programación
   - [x] `Rust` 
   - [x] `C#`
+- [x] Hacer que el Bot pueda enviar mensajes en grupos con temas habilitados 
 - [ ] Añadir docs para comandos de C#
 - [ ] Añadir conexión a Base de Datos
