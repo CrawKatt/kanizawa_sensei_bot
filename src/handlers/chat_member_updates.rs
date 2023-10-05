@@ -35,7 +35,7 @@ pub async fn new_chat_member(
         bot.ban_chat_member(chat_member.chat.id, user.id).await?;
         bot.send_message(
             chat_member.chat.id,
-            format!("{username} Contiene caracteres Rusos, \nAccion: baneado!"),
+            format!("{username} Contiene caracteres Rusos \nAccion: baneado!"),
         ).await?;
         return Ok(())
     }
