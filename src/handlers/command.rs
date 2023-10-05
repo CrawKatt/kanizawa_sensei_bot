@@ -7,6 +7,7 @@ use crate::{
         },
         fun::send,
         admin::ban::banning,
+        admin::unban::unbanning,
     },
     enums::{
         AdminCommands,
@@ -72,6 +73,7 @@ pub async fn admin_command_handler(
 
     match BotCommands::parse(text, me.username()) {
         Ok(AdminCommands::Ban) => banning(bot, msg).await?,
+        Ok(AdminCommands::Unban) => unbanning(bot, msg).await?,
         _ => fun_command_handler(bot, msg, me).await?
     }
 
