@@ -54,7 +54,8 @@ pub async fn banning(bot: Bot, msg: Message) -> ResponseResult<()> {
         .is_banned();
 
     if is_admin_or_owner && chat_member {
-        bot.send_message(msg.chat.id, format!("❌ @{username} [<code>{user_id}</code>] {ALREADY_BANNED}")).await?
+        bot.send_message(msg.chat.id, format!("❌ @{username} [<code>{user_id}</code>] {ALREADY_BANNED}"))
+            .await?
             .delete_message_timer(bot, msg.chat.id, msg.id, 10);
 
         return Ok(())
