@@ -3,13 +3,13 @@
 - [ ] Añadir comandos de moderación
   - [ ] `ban`
     - [x] `por respuesta a un message`
-      - [ ] `por respuesta a un event join (<user> se ha unido al grupo>)`
+      - [x] `por respuesta a un event join (<user> se ha unido al grupo>)`
     - [x] `por user_id`
     - [ ] `por @username`
     - [ ] `por first_name`
   - [ ] `unban`
       - [x] `por respuesta a un message`
-        - [ ] `por respuesta a un event join (<user> se ha unido al grupo>)`
+        - [x] `por respuesta a un event join (<user> se ha unido al grupo>)`
       - [x] `por user_id`
       - [ ] `por @username`
       - [ ] `por first_name` 
