@@ -10,7 +10,7 @@ use teloxide_core::{
         MessageId,
     },
 };
-use teloxide_core::types::{ChatMember, ChatMemberStatus};
+use teloxide_core::types::{ChatMember, ChatMemberStatus, User};
 use tokio::time::sleep;
 
 pub trait AdminOrOwner {
@@ -68,10 +68,20 @@ impl Timer for Message {
 
 pub trait MessageExt {
     fn parse_id(&self) -> u64;
+    fn extract_first_new_member<'user>(&'user self, msg: &'user Message) -> Option<&User>;
 }
 
 impl MessageExt for Message {
     fn parse_id(&self) -> u64 {
-        self.text().unwrap().split_once(' ').map(|(_, a)| a.trim().parse::<u64>().unwrap_or_default()).unwrap()
+        self.text()
+            .and_then(|text| text.split_once(' '))
+            .map(|(_, a)| a.trim())
+            .and_then(|trimmed| trimmed.parse::<u64>().ok())
+            .unwrap_or_default()
+        //self.text().unwrap().split_once(' ').map(|(_, a)| a.trim().parse::<u64>().unwrap_or_default()).unwrap_or_default()
+    }
+
+    fn extract_first_new_member<'user>(&'user self, msg: &'user Message) -> Option<&User> {
+        msg.reply_to_message()?.new_chat_members()?.first()
     }
 }
