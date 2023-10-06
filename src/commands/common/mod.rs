@@ -24,6 +24,7 @@ pub async fn rust(bot: Bot, msg: Message) -> ResponseResult<()> {
 
     if let Ok(data) = std::fs::read_to_string(&path) {
         bot.send_message(msg.chat.id, data)
+            .reply_to_message_id(msg.id)
             .parse_mode(MarkdownV2)
             .await?.delete_message_timer(bot, msg.chat.id, msg.id, 60);
     }
@@ -44,6 +45,7 @@ pub async fn csharp(bot: Bot, msg: Message) -> ResponseResult<()> {
 
     if let Ok(data) = std::fs::read_to_string(path) {
         bot.send_message(msg.chat.id, data)
+            .reply_to_message_id(msg.id)
             .parse_mode(MarkdownV2)
             .await?
             .delete_message_timer(bot, msg.chat.id, msg.id, 60);
