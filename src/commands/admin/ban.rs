@@ -12,7 +12,6 @@ use crate::prelude::Bot;
 use crate::utils::{MessageExt, Timer};
 
 pub async fn banning(bot: Bot, msg: Message) -> ResponseResult<()> {
-    let chat_id = msg.chat.id;
     let user_status = handle_status(&bot, &msg).await;
     if !user_status {
         bot.send_message(msg.chat.id, PermissionsDenied)
@@ -23,7 +22,7 @@ pub async fn banning(bot: Bot, msg: Message) -> ResponseResult<()> {
 
     // Necesario para el ban por id (/ban 12345678)
     let Some(replied) = msg.reply_to_message() else {
-        bot.ban_chat_member(chat_id, UserId(msg.parse_id())).await?;
+        bot.ban_chat_member(msg.chat.id, UserId(msg.parse_id())).await?;
         bot.send_message(msg.chat.id, "✅ Usuario baneado")
             .reply_to_message_id(msg.id).await?
             .delete_message_timer(bot, msg.chat.id, msg.id, 10);
@@ -36,7 +35,7 @@ pub async fn banning(bot: Bot, msg: Message) -> ResponseResult<()> {
             return Ok(())
         };
 
-        bot.ban_chat_member(chat_id, user.id).await?;
+        bot.ban_chat_member(msg.chat.id, user.id).await?;
         bot.send_message(msg.chat.id, "✅ Usuario desbaneado")
             .reply_to_message_id(msg.id).await?
             .delete_message_timer(bot, msg.chat.id, msg.id, 10);

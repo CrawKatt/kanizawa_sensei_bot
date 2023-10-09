@@ -7,7 +7,6 @@ use crate::prelude::Bot;
 use crate::utils::{MessageExt, Timer};
 
 pub async fn unbanning(bot: Bot, msg: Message) -> ResponseResult<()> {
-    let chat_id = msg.chat.id;
     let user_status = handle_status(&bot, &msg).await;
     if !user_status {
         bot.send_message(msg.chat.id, PermissionsDenied)
@@ -16,22 +15,22 @@ pub async fn unbanning(bot: Bot, msg: Message) -> ResponseResult<()> {
         return Ok(())
     }
 
-    // Necessary for ban by id (/ban 12345678)
+    // Necessary for unban by id (/unban 12345678)
     let Some(replied) = msg.reply_to_message() else {
-        bot.unban_chat_member(chat_id, UserId(msg.parse_id())).await?;
+        bot.unban_chat_member(msg.chat.id, UserId(msg.parse_id())).await?;
         bot.send_message(msg.chat.id, "✅ Usuario desbaneado")
             .reply_to_message_id(msg.id).await?
             .delete_message_timer(bot, msg.chat.id, msg.id, 10);
         return Ok(())
     };
 
-    // Unban for reply to a Join Event (/ban <user> Joined the group)
+    // Unban for reply to a Join Event (/unban <user> Joined the group)
     let Some(user) = replied.from() else {
         let Some(user) = msg.extract_first_new_member(&msg) else {
             return Ok(())
         };
 
-        bot.unban_chat_member(chat_id, user.id).await?;
+        bot.unban_chat_member(msg.chat.id, user.id).await?;
         bot.send_message(msg.chat.id, "✅ Usuario desbaneado")
             .reply_to_message_id(msg.id).await?
             .delete_message_timer(bot, msg.chat.id, msg.id, 10);
@@ -39,7 +38,7 @@ pub async fn unbanning(bot: Bot, msg: Message) -> ResponseResult<()> {
         return Ok(())
     };
 
-    // Ban for reply to a message (/ban <replying message>)
+    // Unban for reply to a message (/unban <replying message>)
     let user_id = user.id;
     let username = user.username
         .as_ref()
