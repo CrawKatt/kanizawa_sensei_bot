@@ -14,15 +14,15 @@
       - [ ] `por @username`
       - [ ] `por first_name` 
   - [ ] `mute`
-      - [ ] `por respuesta a un message`
-        - [ ] `por respuesta a un event join (<user> se ha unido al grupo>)` 
-      - [ ] `por user_id`
+      - [x] `por respuesta a un message`
+        - [x] `por respuesta a un event join (<user> se ha unido al grupo>)` 
+      - [x] `por user_id`
       - [ ] `por @username`
       - [ ] `por first_name`
   - [ ] `unmute`
-      - [ ] `por respuesta a un message`
-        - [ ] `por respuesta a un event join (<user> se ha unido al grupo>)`
-      - [ ] `por user_id`
+      - [x] `por respuesta a un message`
+        - [x] `por respuesta a un event join (<user> se ha unido al grupo>)`
+      - [x] `por user_id`
       - [ ] `por @username`
       - [ ] `por first_name`
 - [x] Añadir comandos de docs para Lenguajes de Programación
