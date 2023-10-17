@@ -22,7 +22,10 @@ pub async fn banning(bot: Bot, msg: Message) -> ResponseResult<()> {
 
     // Necesario para el ban por id (/ban 12345678)
     let Some(replied) = msg.reply_to_message() else {
-        bot.ban_chat_member(msg.chat.id, UserId(msg.parse_id())).await?;
+        // metodo parse_id() en utils/mod.rs sirve para extraer el id del
+        // mensaje ya sea mediante el @username o mediante el user_id proporcionado en un mensaje
+        let parsed_id = msg.parse_id().await;
+        bot.ban_chat_member(msg.chat.id, UserId(parsed_id)).await?;
         bot.send_message(msg.chat.id, "✅ Usuario baneado")
             .reply_to_message_id(msg.id).await?
             .delete_message_timer(bot, msg.chat.id, msg.id, 10);

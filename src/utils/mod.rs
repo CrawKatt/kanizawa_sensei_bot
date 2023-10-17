@@ -1,6 +1,9 @@
+pub mod db;
+
 use crate::prelude::Bot;
 use std::time::Duration;
 use teloxide_core::{
+    requests::ResponseResult,
     prelude::{
         ChatId,
         Requester,
@@ -8,10 +11,13 @@ use teloxide_core::{
     types::{
         Message,
         MessageId,
+        ChatMember,
+        ChatMemberStatus,
+        User,
     },
 };
-use teloxide_core::types::{ChatMember, ChatMemberStatus, User};
 use tokio::time::sleep;
+use crate::utils::db::send_data;
 
 pub trait AdminOrOwner {
     fn is_admin(&self) -> bool;
@@ -66,22 +72,39 @@ impl Timer for Message {
     }
 }
 
+#[async_trait::async_trait]
 pub trait MessageExt {
-    fn parse_id(&self) -> u64;
+    async fn parse_id(&self) -> u64;
     fn extract_first_new_member<'user>(&'user self, msg: &'user Message) -> Option<&User>;
 }
 
+#[async_trait::async_trait]
 impl MessageExt for Message {
-    fn parse_id(&self) -> u64 {
-        self.text()
-            .and_then(|text| text.split_once(' '))
-            .map(|(_, a)| a.trim())
-            .and_then(|trimmed| trimmed.parse::<u64>().ok())
-            .unwrap_or_default()
-        //self.text().unwrap().split_once(' ').map(|(_, a)| a.trim().parse::<u64>().unwrap_or_default()).unwrap_or_default()
+    /// # Parse the message to get the user_id
+    /// Parse the message to get the user_id from:
+    /// - Reply to a Message
+    /// - Send a Message with @username or user_id as an argument (e.g. /ban @username, /ban 12345678)
+    async fn parse_id(&self) -> u64 {
+        let Some(replied) = self.reply_to_message() else {
+            self.text().unwrap_or_default().parse::<u64>().unwrap_or_default();
+            return send_data(self.clone()).await.unwrap_or_default();
+        };
+        replied.text().unwrap_or_default().parse::<u64>().unwrap_or_default()
     }
 
     fn extract_first_new_member<'user>(&'user self, msg: &'user Message) -> Option<&User> {
         msg.reply_to_message()?.new_chat_members()?.first()
     }
+}
+
+pub async fn get_user_data_command(bot: Bot, msg: Message) -> ResponseResult<()> {
+    let Some(replied) = msg.reply_to_message() else {
+        bot.send_message(msg.chat.id, "❌ No has respondido a ningún mensaje para obtener los datos del usuario").await?;
+        return Ok(())
+    };
+
+    let data = bot.get_chat_member(msg.chat.id, replied.from().unwrap().id).await?;
+    bot.send_message(msg.chat.id, format!("{data:#?}")).await?;
+
+    Ok(())
 }

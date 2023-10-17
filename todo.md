@@ -1,33 +1,44 @@
 # Cosas pendientes
 
-- [ ] Añadir comandos de moderación
-  - [ ] `ban`
+- [x] Añadir comandos de moderación
+  - [x] `ban`
     - [x] `por respuesta a un message`
       - [x] `por respuesta a un event join (<user> se ha unido al grupo>)`
     - [x] `por user_id`
-    - [ ] `por @username`
-    - [ ] `por first_name`
-  - [ ] `unban`
+    - [x] `por @username`
+    - [x] `por first_name`
+  - [x] `unban`
       - [x] `por respuesta a un message`
         - [x] `por respuesta a un event join (<user> se ha unido al grupo>)`
       - [x] `por user_id`
-      - [ ] `por @username`
-      - [ ] `por first_name` 
-  - [ ] `mute`
+      - [x] `por @username`
+      - [x] `por first_name` 
+  - [x] `mute`
       - [x] `por respuesta a un message`
         - [x] `por respuesta a un event join (<user> se ha unido al grupo>)` 
       - [x] `por user_id`
-      - [ ] `por @username`
-      - [ ] `por first_name`
-  - [ ] `unmute`
+      - [x] `por @username`
+      - [x] `por first_name`
+  - [x] `unmute`
       - [x] `por respuesta a un message`
         - [x] `por respuesta a un event join (<user> se ha unido al grupo>)`
       - [x] `por user_id`
-      - [ ] `por @username`
-      - [ ] `por first_name`
+      - [x] `por @username`
+      - [x] `por first_name`
 - [x] Añadir comandos de docs para Lenguajes de Programación
   - [x] `Rust` 
   - [x] `C#`
 - [x] Hacer que el Bot pueda enviar mensajes en grupos con temas habilitados 
-- [ ] Añadir docs para comandos de C#
+- [ ] Añadir y mejorar docs para comandos de C#
 - [ ] Añadir conexión a Base de Datos
+  - [ ] Añadir sistema de caché para la Base de Datos mediante JSON (pre-cargar la caché al iniciar el Bot)
+- [ ] Crear handler de Botones para el Bot
+- [ ] Crear la función del Bot que notifica si un usuario se ha cambiado el nombre, apellido o @username
+  - [ ] Por `first_name`
+  - [ ] Por `last_name`
+  - [ ] Por `@username`
+- [ ] Crear un comando de información para obtener la información de un usuario
+  - [ ] Por `first_name`
+  - [ ] Por `last_name`
+  - [ ] Por `@username`
+- [ ] Crear una macro de logs para el Bot

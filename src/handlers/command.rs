@@ -29,6 +29,8 @@ use teloxide_core::{
         Message,
     },
 };
+use crate::utils::db::get_user_data;
+use crate::utils::get_user_data_command;
 
 pub async fn common_command_handler(
     bot: Bot,
@@ -54,7 +56,7 @@ pub async fn docs_command_handler(
     match BotCommands::parse(text, me.username()) {
         Ok(DocsCommands::Rust) => rust(bot, msg).await?,
         Ok(DocsCommands::Csharp) => csharp(bot, msg).await?,
-        _ => admin_command_handler(bot, msg, me).await?,
+        _ => Box::pin(admin_command_handler(bot, msg, me)).await?,
     };
 
     Ok(())
@@ -84,21 +86,19 @@ pub async fn fun_command_handler(
 ) -> ResponseResult<()> {
     let text = msg.text().unwrap_or_default();
     let Ok(FunCommands::Send) = BotCommands::parse(text, me.username()) else {
-        //for_database(msg).await?;
+        for_database(msg).await?;
         return Ok(())
     };
     send(bot, msg).await?;
 
     Ok(())
 }
-/*
+
 pub async fn for_database(msg: Message) -> ResponseResult<()> {
-    let text = msg.text().unwrap_or_default();
-
-    //let Some(_) = msg.text() else { return Ok(()) };
-
-    // insert_user_to_sql(&msg).await?;
+    let Some(_) = msg.text() else { return Ok(()) };
+    get_user_data(msg).await.unwrap_or_else(|e| {
+        println!("Error al obtener los datos del usuario \n{e:#?}");
+    });
 
     Ok(())
 }
-*/

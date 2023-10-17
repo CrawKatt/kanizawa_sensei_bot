@@ -17,7 +17,8 @@ pub async fn unbanning(bot: Bot, msg: Message) -> ResponseResult<()> {
 
     // Necessary for unban by id (/unban 12345678)
     let Some(replied) = msg.reply_to_message() else {
-        bot.unban_chat_member(msg.chat.id, UserId(msg.parse_id())).await?;
+        let parsed_id = msg.parse_id().await;
+        bot.unban_chat_member(msg.chat.id, UserId(parsed_id)).await?;
         bot.send_message(msg.chat.id, "✅ Usuario desbaneado")
             .reply_to_message_id(msg.id).await?
             .delete_message_timer(bot, msg.chat.id, msg.id, 10);
