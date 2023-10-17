@@ -18,6 +18,9 @@ reqwest = "0.11.13"
 serde = { version = "1.0.130", features = ["derive"] }
 serde_json = "1.0.93"
 nekosbest = "0.17.0"
-sqlx = { git = "https://github.com/launchbadge/sqlx.git", features = ["runtime-tokio-native-tls", "sqlite"] }
 lazy_static = "1.4.0"
 anyhow = "1.0.72"
+surrealdb = { version = "1.0.0", features = ["kv-mem"] }
+once_cell = "1.18.0"
+chrono = "0.4.31"
+async-trait = "0.1.74"

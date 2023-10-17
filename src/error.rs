@@ -39,7 +39,7 @@ impl ErrMessage {
             Self::IdOrUsernameNotValid => "❌ El ID o @Username proporcionado no es válido, considera reenviar un mensaje al bot para hacer un ban por ID",
             Self::NotUsernameFound404 => "❌ No se encontró ningún usuario con el username",
             */
-            Self::PermissionsDenied => "❌ No tienes permisos para usar este comando",
+            PermissionsDenied => "❌ No tienes permisos para usar este comando",
             //Self::UserNotFound => "❌ No se pudo obtener el usuario",
         }
     }
