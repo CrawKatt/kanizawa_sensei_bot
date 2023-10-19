@@ -25,8 +25,8 @@ pub type Bot = DefaultParseMode<teloxide::Bot>;
 pub async fn run() {
     let bot = teloxide::Bot::from_env().parse_mode(ParseMode::Html);
     let handler = dptree::entry()
-        .inspect(|u: Update| {
-            eprintln!("Update: {u:#?}");
+        .inspect(|_u: Update| {
+            //eprintln!("Update: {u:#?}");
         })
         .branch(Update::filter_message().endpoint(common_command_handler))
         .branch(
