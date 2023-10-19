@@ -9,11 +9,12 @@ mod handlers;
 mod prelude;
 mod utils;
 use crate::utils::db::DB;
+use crate::utils::load_data;
 
 #[tokio::main]
 async fn main() {
-    DB.connect::<Mem>(()).await.expect("TODO: panic message");
-    //println!("DB: {DB:?}");
+    DB.connect::<Mem>(()).await.unwrap_or_else(|why| panic!("Ocurrio un error al conectar a la base de datos {why:#?}"));
+    load_data().await.unwrap_or_else(|why| eprintln!("Ocurrio un error al cargar los datos: {why:#?}"));
     pretty_env_logger::init();
     log::info!("Iniciando Bot...");
     dotenv().ok();
