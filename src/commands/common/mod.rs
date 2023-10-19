@@ -22,12 +22,21 @@ pub async fn rust(bot: Bot, msg: Message) -> ResponseResult<()> {
 
     let path = format!("docs/rust/{concept}.md");
 
-    if let Ok(data) = std::fs::read_to_string(&path) {
-        bot.send_message(msg.chat.id, data)
+    let Ok(data) = std::fs::read_to_string(&path) else {
+        bot.send_message(msg.chat.id, "Uso: /rust \\<concepto\\>")
             .reply_to_message_id(msg.id)
             .parse_mode(MarkdownV2)
-            .await?.delete_message_timer(bot, msg.chat.id, msg.id, 60);
-    }
+            .await?
+            .delete_message_timer(bot, msg.chat.id, msg.id, 10);
+
+        return Ok(())
+    };
+
+    bot.send_message(msg.chat.id, data)
+        .reply_to_message_id(msg.id)
+        .parse_mode(MarkdownV2)
+        .await?
+        .delete_message_timer(bot, msg.chat.id, msg.id, 60);
 
     Ok(())
 }
@@ -43,13 +52,21 @@ pub async fn csharp(bot: Bot, msg: Message) -> ResponseResult<()> {
 
     let path = format!("docs/csharp/{concept}.md");
 
-    if let Ok(data) = std::fs::read_to_string(path) {
-        bot.send_message(msg.chat.id, data)
+    let Ok(data) = std::fs::read_to_string(path) else {
+        bot.send_message(msg.chat.id, "Uso: /csharp \\<concepto\\>")
             .reply_to_message_id(msg.id)
             .parse_mode(MarkdownV2)
             .await?
-            .delete_message_timer(bot, msg.chat.id, msg.id, 60);
-    }
+            .delete_message_timer(bot, msg.chat.id, msg.id, 10);
+
+        return Ok(())
+    };
+
+    bot.send_message(msg.chat.id, data)
+        .reply_to_message_id(msg.id)
+        .parse_mode(MarkdownV2)
+        .await?
+        .delete_message_timer(bot, msg.chat.id, msg.id, 60);
 
     Ok(())
 }
