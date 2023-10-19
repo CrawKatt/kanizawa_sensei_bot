@@ -26,6 +26,12 @@ pub async fn unmuting(bot: Bot, msg: Message) -> ResponseResult<()> {
     // Necesario para el Unmute por id (/unmute 12345678)
     let Some(replied) = msg.reply_to_message() else {
         let parsed_id = msg.parse_id().await;
+        if parsed_id == 404 {
+            bot.send_message(msg.chat.id, "El usuario proporcionado no existe o no es válido")
+                .reply_to_message_id(msg.id).await?
+                .delete_message_timer(bot, msg.chat.id, msg.id, 10);
+            return Ok(())
+        }
         bot.restrict_chat_member(msg.chat.id, UserId(parsed_id),ChatPermissions::all()).await?;
         bot.send_message(msg.chat.id, "✅ Usuario silenciado")
             .reply_to_message_id(msg.id).await?
