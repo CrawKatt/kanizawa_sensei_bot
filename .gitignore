@@ -8,3 +8,4 @@
 /.idea/kanizawa_sensei_bot.iml
 /Cargo.lock
 /.idea/discord.xml
+/backup.json
