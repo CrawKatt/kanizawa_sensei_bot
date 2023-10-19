@@ -30,7 +30,6 @@ use teloxide_core::{
     },
 };
 use crate::utils::db::get_user_data;
-use crate::utils::get_user_data_command;
 
 pub async fn common_command_handler(
     bot: Bot,
