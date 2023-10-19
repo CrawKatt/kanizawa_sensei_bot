@@ -1,9 +1,10 @@
 pub mod db;
 
+use std::fs::File;
+use std::io::{BufReader, Write};
 use crate::prelude::Bot;
 use std::time::Duration;
 use teloxide_core::{
-    requests::ResponseResult,
     prelude::{
         ChatId,
         Requester,
@@ -17,7 +18,7 @@ use teloxide_core::{
     },
 };
 use tokio::time::sleep;
-use crate::utils::db::send_data;
+use crate::utils::db::{Data, DB, send_data, SurrealResult};
 
 pub trait AdminOrOwner {
     fn is_admin(&self) -> bool;
@@ -89,7 +90,7 @@ impl MessageExt for Message {
             self.text().unwrap_or_default().parse::<u64>().unwrap_or_default();
             return send_data(self.clone()).await.unwrap_or_default();
         };
-        replied.text().unwrap_or_default().parse::<u64>().unwrap_or_default()
+        replied.text().unwrap_or_default().parse::<u64>().unwrap_or(404)
     }
 
     fn extract_first_new_member<'user>(&'user self, msg: &'user Message) -> Option<&User> {
@@ -97,6 +98,44 @@ impl MessageExt for Message {
     }
 }
 
+async fn backup_data() -> SurrealResult<()> {
+    // Seleccionar todos los datos de la tabla "users"
+    let data: Vec<Data> = DB.select("users").await?;
+
+    // Serializar los datos a JSON
+    let serialized_data = serde_json::to_string_pretty(&data);
+
+    // Crear el archivo de respaldo
+    let mut file = File::create("backup.json").expect("❌ No se pudo crear el archivo de respaldo");
+
+    // Escribir los datos serializados en el archivo de respaldo
+    file.write_all(serialized_data.expect("Ocurrio un error").as_bytes()).expect("❌ No se pudo escribir en el archivo de respaldo");
+
+    Ok(())
+}
+
+pub async fn load_data() -> SurrealResult<()> {
+    DB.use_ns("teloxide-namespace").use_db("teloxide").await?;
+
+    // Abrir el archivo de respaldo
+    let file = File::open("backup.json").expect("❌ No se pudo abrir el archivo de respaldo");
+
+    // Leer el archivo de respaldo
+    let reader = BufReader::new(file);
+
+    // Deserializar los datos del archivo de respaldo
+    let data: Vec<Data> = serde_json::from_reader(reader).expect("❌ No se pudo deserializar los datos del archivo de respaldo");
+
+    for item in &data {
+        // Insertar los datos en la base de datos
+        let _created: Vec<Data> = DB.create("users").content(item).await?;
+        //println!("Usuarios pre-cargados: \n{created:#?}\n");
+    }
+
+    Ok(())
+}
+
+/*
 pub async fn get_user_data_command(bot: Bot, msg: Message) -> ResponseResult<()> {
     let Some(replied) = msg.reply_to_message() else {
         bot.send_message(msg.chat.id, "❌ No has respondido a ningún mensaje para obtener los datos del usuario").await?;
@@ -108,3 +147,4 @@ pub async fn get_user_data_command(bot: Bot, msg: Message) -> ResponseResult<()>
 
     Ok(())
 }
+*/
