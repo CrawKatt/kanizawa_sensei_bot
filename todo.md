@@ -30,8 +30,8 @@
   - [x] `C#`
 - [x] Hacer que el Bot pueda enviar mensajes en grupos con temas habilitados 
 - [ ] Añadir y mejorar docs para comandos de C#
-- [ ] Añadir conexión a Base de Datos
-  - [ ] Añadir sistema de caché para la Base de Datos mediante JSON (pre-cargar la caché al iniciar el Bot)
+- [x] Añadir conexión a Base de Datos
+  - [x] Añadir sistema de caché para la Base de Datos mediante JSON (pre-cargar la caché al iniciar el Bot)
 - [ ] Crear handler de Botones para el Bot
 - [ ] Crear la función del Bot que notifica si un usuario se ha cambiado el nombre, apellido o @username
   - [ ] Por `first_name`
