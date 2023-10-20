@@ -10,26 +10,26 @@ import this
 
 
 """
-The Zen of Python, by Tim Peters
+La Filosofia de Python, por Tim Peters
 
-Beautiful is better than ugly.
-Explicit is better than implicit.
-Simple is better than complex.
-Complex is better than complicated.
-Flat is better than nested.
-Sparse is better than dense.
-Readability counts.
-Special cases aren't special enough to break the rules.
-Although practicality beats purity.
-Errors should never pass silently.
-Unless explicitly silenced.
-In the face of ambiguity, refuse the temptation to guess.
-There should be one -- and preferably only one -- obvious way to do it.
-Although that way may not be obvious at first unless you're Dutch.
-Now is better than never.
-Although never is often better than right now.
-If the implementation is hard to explain, it's a bad idea.
-If the implementation is easy to explain, it may be a good idea.
-Namespaces are one honking great idea -- let's do more of those!
+0) Lo bello es mejor que lo feo.
+1) Lo explícito es mejor que lo implícito.
+2) Lo simple es mejor que lo complejo.
+3) Complejo es mejor que complicado.
+4) Plano es mejor que anidado.
+5) Escaso es mejor que denso.
+6) La legibilidad cuenta.
+7) Los casos especiales no son lo suficientemente especiales como para romper las reglas.
+8) Aunque la practicidad vence a la pureza.
+9) Los errores nunca deben pasar en silencio.
+10) A menos que se silencie explícitamente.
+11) Ante la ambigüedad, rechace la tentación de adivinar.
+12) Debería haber una, y preferiblemente sólo una, manera obvia de hacerlo.
+13) Aunque puede que al principio no resulte obvio a menos que seas holandés.
+14) Ahora es mejor que nunca.
+15) Aunque nunca suele ser mejor que ahora.
+16) Si la implementación es difícil de explicar, es una mala idea.
+17) Si la implementación es fácil de explicar, puede ser una buena idea.
+18) Los espacios de nombres son una gran idea: ¡hagamos más de eso!
 """
 ```
