@@ -51,5 +51,4 @@ repr(edad) # Este es el representador que tiene mi instancia de la clase int
 
 # Esta seria un variable o instancia de la clase de int
 # asi seria de manera representativa.
-
 ```
