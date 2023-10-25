@@ -23,11 +23,18 @@ pub async fn get_user_data(msg: Message) -> SurrealResult<()> {
     // Conectar a la base de datos
     DB.use_ns("teloxide-namespace").use_db("teloxide").await?;
 
+    // El Bot detecta cuando alguien trae alguien a un grupo y como no es un mensaje,
+    // puede devolver panic. NO USAR UNWRAP EN LOS DATOS
+    let Some(user) = msg.from() else {
+        eprintln!("❌ No se pudo obtener los datos del usuario");
+        return Ok(())
+    };
+
     // Se usa `.clone()` ya que `.to_string()` aplica `.to_owned()` que a su vez aplica `.clone()` internamente
-    let first_name = msg.from().unwrap().first_name.clone();
-    let last_name = msg.from().unwrap().last_name.as_ref().unwrap_or(&String::from("Ninguno")).clone();
-    let user_id = msg.from().unwrap().id.to_string();
-    let username = msg.from().unwrap().username.as_ref().unwrap_or(&String::from("Ninguno")).clone();
+    let first_name = user.first_name.clone();
+    let last_name = user.last_name.clone().unwrap_or_else(|| String::from("Ninguno"));
+    let user_id = user.id.to_string();
+    let username = user.username.clone().unwrap_or_else(|| String::from("Ninguno"));
 
     // Obtener los datos del usuario que envió el mensaje
     let data = Data {
