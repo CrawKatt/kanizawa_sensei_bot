@@ -11,11 +11,19 @@ use teloxide_core::{
     }
 };
 use crate::prelude::Bot;
-use crate::error::{PermissionsDenied, handle_status};
+use crate::error::{PermissionsDenied, handle_status, IdOrUsernameNotValid, handle_target_mute, NotMuted};
 use crate::utils::{MessageExt, Timer};
 
 pub async fn unmuting(bot: Bot, msg: Message) -> ResponseResult<()> {
     let user_status = handle_status(&bot, &msg).await;
+    let target_status = handle_target_mute(&bot, &msg).await;
+    if !target_status {
+        bot.send_message(msg.chat.id, NotMuted)
+            .reply_to_message_id(msg.id).await?
+            .delete_message_timer(bot, msg.chat.id, msg.id, 10);
+        return Ok(())
+    }
+
     if !user_status {
         bot.send_message(msg.chat.id, PermissionsDenied)
             .reply_to_message_id(msg.id).await?
@@ -27,7 +35,7 @@ pub async fn unmuting(bot: Bot, msg: Message) -> ResponseResult<()> {
     let Some(replied) = msg.reply_to_message() else {
         let parsed_id = msg.parse_id().await;
         if parsed_id == 404 {
-            bot.send_message(msg.chat.id, "El usuario proporcionado no existe o no es válido")
+            bot.send_message(msg.chat.id, IdOrUsernameNotValid)
                 .reply_to_message_id(msg.id).await?
                 .delete_message_timer(bot, msg.chat.id, msg.id, 10);
             return Ok(())
@@ -45,7 +53,7 @@ pub async fn unmuting(bot: Bot, msg: Message) -> ResponseResult<()> {
             return Ok(())
         };
         bot.restrict_chat_member(msg.chat.id, user.id,ChatPermissions::all()).await?;
-        bot.send_message(msg.chat.id, "✅ Se ha removido el silencio al usuario")
+        bot.send_message(msg.chat.id, format!("✅ Se ha removido el silencio a {:?}", user.mention()))
             .reply_to_message_id(msg.id).await?
             .delete_message_timer(bot, msg.chat.id, msg.id, 10);
 
