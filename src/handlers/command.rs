@@ -1,9 +1,9 @@
 use crate::{
     commands::{
         common::{
-            csharp,
-            help,
-            rust,
+            handle_docs,
+            start,
+            help
         },
         fun::send,
         admin::{
@@ -38,9 +38,9 @@ pub async fn common_command_handler(
 ) -> ResponseResult<()> {
     let text = msg.text().unwrap_or_default();
     match BotCommands::parse(text, me.username()) {
-        Ok(BotCommonCommands::Start) => rust(bot, msg).await?,
+        Ok(BotCommonCommands::Start) => start(bot, msg).await?,
         Ok(BotCommonCommands::Help) => help(bot, msg).await?,
-        _ => Box::pin(docs_command_handler(bot, msg, me)).await?,
+        _ => docs_command_handler(bot, msg, me).await?,
     }
 
     Ok(())
@@ -53,8 +53,9 @@ pub async fn docs_command_handler(
 ) -> ResponseResult<()> {
     let text = msg.text().unwrap_or_default();
     match BotCommands::parse(text, me.username()) {
-        Ok(DocsCommands::Rust) => rust(bot, msg).await?,
-        Ok(DocsCommands::Csharp) => csharp(bot, msg).await?,
+        Ok(DocsCommands::Rust) => handle_docs(bot, msg, "rust").await?,
+        Ok(DocsCommands::Csharp) => handle_docs(bot, msg, "csharp").await?,
+        Ok(DocsCommands::Python) => handle_docs(bot, msg, "python").await?,
         _ => Box::pin(admin_command_handler(bot, msg, me)).await?,
     };
 
@@ -85,19 +86,12 @@ pub async fn fun_command_handler(
 ) -> ResponseResult<()> {
     let text = msg.text().unwrap_or_default();
     let Ok(FunCommands::Send) = BotCommands::parse(text, me.username()) else {
-        for_database(msg).await?;
+        get_user_data(msg).await.unwrap_or_else(|e| {
+            println!("Error al obtener los datos del usuario \n{e:#?}");
+        });
         return Ok(())
     };
     send(bot, msg).await?;
-
-    Ok(())
-}
-
-pub async fn for_database(msg: Message) -> ResponseResult<()> {
-    let Some(_) = msg.text() else { return Ok(()) };
-    get_user_data(msg).await.unwrap_or_else(|e| {
-        println!("Error al obtener los datos del usuario \n{e:#?}");
-    });
 
     Ok(())
 }
