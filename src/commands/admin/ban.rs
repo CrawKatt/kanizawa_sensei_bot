@@ -7,13 +7,22 @@ use teloxide_core::{
     requests::ResponseResult,
     types::Message
 };
-use crate::error::{PermissionsDenied, handle_status};
+use crate::error::{PermissionsDenied, handle_status, IdOrUsernameNotValid, handle_target_ban};
 use crate::prelude::Bot;
 use crate::utils::{MessageExt, Timer};
 use crate::utils::db::delete_user_backup;
 
 pub async fn banning(bot: Bot, msg: Message) -> ResponseResult<()> {
     let user_status = handle_status(&bot, &msg).await;
+    let target_status = handle_target_ban(&bot, &msg).await;
+
+    if target_status {
+        bot.send_message(msg.chat.id, "❌ El usuario ya está baneado")
+            .reply_to_message_id(msg.id).await?
+            .delete_message_timer(bot, msg.chat.id, msg.id, 10);
+        return Ok(())
+    }
+
     if !user_status {
         bot.send_message(msg.chat.id, PermissionsDenied)
             .reply_to_message_id(msg.id).await?
@@ -27,7 +36,7 @@ pub async fn banning(bot: Bot, msg: Message) -> ResponseResult<()> {
         // mensaje ya sea mediante el @username o mediante el user_id proporcionado en un mensaje
         let parsed_id = msg.parse_id().await;
         if parsed_id == 404 {
-            bot.send_message(msg.chat.id, "El usuario proporcionado no existe o no es válido")
+            bot.send_message(msg.chat.id, IdOrUsernameNotValid)
                 .reply_to_message_id(msg.id).await?
                 .delete_message_timer(bot, msg.chat.id, msg.id, 10);
             return Ok(())
