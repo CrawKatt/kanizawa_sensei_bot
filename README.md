@@ -19,7 +19,7 @@ This is a Telegram bot that can teach you the Rust programming language mediant 
 
 * Clone this repository
 ```
-git clone "link-here"
+git clone "https://github.com/CrawKatt/kanizawa_sensei_bot.git"
 ```
 
 * Create a .env file
