@@ -2,22 +2,12 @@ pub mod db;
 
 use std::fs::File;
 use std::io::{BufReader, Write};
-use crate::prelude::Bot;
 use std::time::Duration;
-use teloxide_core::{
-    prelude::{
-        ChatId,
-        Requester,
-    },
-    types::{
-        Message,
-        MessageId,
-        ChatMember,
-        ChatMemberStatus,
-        User,
-    },
-};
 use tokio::time::sleep;
+use teloxide_core::prelude::{ChatId, Requester};
+use teloxide_core::types::{Message, MessageId, ChatMember, ChatMemberStatus, User};
+
+use crate::prelude::Bot;
 use crate::utils::db::{Data, DB, send_data, SurrealResult};
 
 pub trait AdminOrOwner {
@@ -76,7 +66,7 @@ impl Timer for Message {
 #[async_trait::async_trait]
 pub trait MessageExt {
     async fn parse_id(&self) -> u64;
-    fn extract_first_new_member<'user>(&'user self, msg: &'user Message) -> Option<&User>;
+    fn extract_new_member_info<'user>(&'user self, msg: &'user Message) -> Option<&User>;
 }
 
 #[async_trait::async_trait]
@@ -87,13 +77,24 @@ impl MessageExt for Message {
     /// - Send a Message with @username or user_id as an argument (e.g. /ban @username, /ban 12345678)
     async fn parse_id(&self) -> u64 {
         let Some(replied) = self.reply_to_message() else {
-            self.text().unwrap_or_default().parse::<u64>().unwrap_or_default();
-            return send_data(self.clone()).await.unwrap_or_default();
+
+            // Get the user_id from the Database by @username
+            let username_u64 = send_data(self.clone()).await.unwrap_or_else(|e| {
+                println!("Error al enviar los datos a la base de datos: send_data() {e:#?}");
+                404
+            });
+
+            // First get a user_id from a message if not found a user_id, get the user_id from the @username
+            return self.text()
+                .and_then(|text| text.split_once(' '))
+                .map(|(_, a)| a.trim())
+                .and_then(|trimmed| trimmed.parse::<u64>().ok())
+                .unwrap_or(username_u64);
         };
         replied.text().unwrap_or_default().parse::<u64>().unwrap_or(404)
     }
 
-    fn extract_first_new_member<'user>(&'user self, msg: &'user Message) -> Option<&User> {
+    fn extract_new_member_info<'user>(&'user self, msg: &'user Message) -> Option<&User> {
         msg.reply_to_message()?.new_chat_members()?.first()
     }
 }
