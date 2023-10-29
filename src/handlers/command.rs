@@ -22,13 +22,9 @@ use crate::{
     prelude::Bot,
 };
 use teloxide::utils::command::BotCommands;
-use teloxide_core::{
-    requests::ResponseResult,
-    types::{
-        Me,
-        Message,
-    },
-};
+use teloxide_core:: types::{Me, Message};
+use teloxide_core::requests::ResponseResult;
+use crate::commands::common::info;
 use crate::utils::db::get_user_data;
 
 pub async fn common_command_handler(
@@ -40,6 +36,7 @@ pub async fn common_command_handler(
     match BotCommands::parse(text, me.username()) {
         Ok(BotCommonCommands::Start) => start(bot, msg).await?,
         Ok(BotCommonCommands::Help) => help(bot, msg).await?,
+        Ok(BotCommonCommands::Info) => info(bot, msg).await?,
         _ => docs_command_handler(bot, msg, me).await?,
     }
 
