@@ -41,7 +41,7 @@ pub async fn banning(bot: Bot, msg: Message) -> ResponseResult<()> {
         bot.send_message(msg.chat.id, "✅ Usuario baneado")
             .reply_to_message_id(msg.id).await?
             .delete_message_timer(bot, msg.chat.id, msg.id, 10);
-        delete_user_backup(parsed_id.to_string()).unwrap_or_default();
+        delete_user_backup(&parsed_id.to_string()).unwrap_or_default();
 
         return Ok(())
     };
