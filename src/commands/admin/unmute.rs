@@ -1,15 +1,7 @@
-use teloxide_core::{
-    payloads::SendMessageSetters,
-    requests::ResponseResult,
-    prelude::{
-        Requester,
-        UserId
-    },
-    types::{
-        Message,
-        ChatPermissions
-    }
-};
+use teloxide_core::prelude::{Requester, UserId};
+use teloxide_core::types::{Message, ChatPermissions};
+use teloxide_core::requests::ResponseResult;
+use teloxide_core::payloads::SendMessageSetters;
 use crate::prelude::Bot;
 use crate::error::{PermissionsDenied, handle_status, IdOrUsernameNotValid, handle_target_mute, NotMuted};
 use crate::utils::{MessageExt, Timer};
@@ -49,7 +41,7 @@ pub async fn unmuting(bot: Bot, msg: Message) -> ResponseResult<()> {
 
     // Unmute for reply to a Join Event (/unmute <user> Joined the group)
     let Some(user) = replied.from() else {
-        let Some(user) = msg.extract_first_new_member(&msg) else {
+        let Some(user) = msg.extract_new_member_info(&msg) else {
             return Ok(())
         };
         bot.restrict_chat_member(msg.chat.id, user.id,ChatPermissions::all()).await?;
