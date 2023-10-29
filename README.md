@@ -1,6 +1,6 @@
 # Kanizawa Sensei Telegram Bot
 
-This is a Telegram bot that can teach you the Rust programming language mediant easy examples of code and short descriptions, moderate your groups and more
+This is a Telegram bot that can teach you the Rust programming language by easy examples of code and short descriptions, moderate your groups and more
 
 
 ## Features
@@ -38,7 +38,7 @@ cargo run
 
 Contributions are always welcome!
 
-See `contributing.md` for ways to get started.
+See [Contributing Book](https://crawkatt.github.io/kanizawa_sensei_book/) for ways to get started.
 
 Please adhere to this project's `code of conduct`.
 
