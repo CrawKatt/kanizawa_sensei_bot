@@ -7,19 +7,22 @@ use surrealdb::Surreal;
 use surrealdb::engine::local::Db;
 use teloxide_core::types::Message;
 pub use surrealdb::Result as SurrealResult;
+use teloxide::utils::html;
+use teloxide_core::prelude::Requester;
+use crate::prelude::Bot;
 use crate::utils::backup_data;
 
 pub static DB: Lazy<Surreal<Db>> = Lazy::new(Surreal::init);
 
 #[derive(Serialize, Deserialize, Clone, Default, PartialEq, Eq)]
 pub struct Data {
-    first_name: String,
-    last_name: String, // Es Option<String> pero se requiere tipo String para evitar guardar Some("last_name") en la base de datos
-    user_id: String, // String Necesario para evitar Overflow
-    username: String, // Es Option<String> pero se requiere tipo String para evitar guardar Some("username") en la base de datos
+    pub first_name: String,
+    pub last_name: Option<String>, // Es Option<String> pero se requiere tipo String para evitar guardar Some("last_name") en la base de datos
+    pub user_id: String, // String Necesario para evitar Overflow
+    pub username: Option<String>, // Es Option<String> pero se requiere tipo String para evitar guardar Some("username") en la base de datos
 }
 
-pub async fn get_user_data(msg: Message) -> SurrealResult<()> {
+pub async fn get_user_data(bot: Bot, msg: Message) -> SurrealResult<()> {
     // Conectar a la base de datos
     DB.use_ns("teloxide-namespace").use_db("teloxide").await?;
 
@@ -32,14 +35,14 @@ pub async fn get_user_data(msg: Message) -> SurrealResult<()> {
 
     // Se usa `.clone()` ya que `.to_string()` aplica `.to_owned()` que a su vez aplica `.clone()` internamente
     let first_name = user.first_name.clone();
-    let last_name = user.last_name.clone().unwrap_or_else(|| String::from("Ninguno"));
+    let last_name = user.last_name.clone();
     let user_id = user.id.to_string();
-    let username = user.username.clone().unwrap_or_else(|| String::from("Ninguno"));
+    let username = user.username.clone();
 
     // Obtener los datos del usuario que envió el mensaje
     let data = Data {
-        first_name,
-        last_name,
+        first_name: first_name.clone(),
+        last_name: last_name.clone(),
         user_id: user_id.clone(), // El user_id debe ser almacenado como String para evitar Overflow
         username,
     };
@@ -49,7 +52,7 @@ pub async fn get_user_data(msg: Message) -> SurrealResult<()> {
     let sql_query = "SELECT * FROM users WHERE user_id = $user_id";
     let database_info: Option<Data> = DB
         .query(sql_query)
-        .bind(("user_id", user_id)) // pasar el valor
+        .bind(("user_id", &user_id)) // pasar el valor
         .await?
         .take(0)?; // take(0) requiere un Option<T> para funcionar
 
@@ -64,9 +67,35 @@ pub async fn get_user_data(msg: Message) -> SurrealResult<()> {
         return Ok(())
     }
 
-    // Si el usuario existe pero sus datos no coinciden con los de la base de datos, actualizarlos
-    if database_user.username != data.username || database_user.first_name != data.first_name || database_user.last_name != data.last_name {
+    let user_id_detect = user_id.parse::<i64>().unwrap_or_default();
+    let before_first_name = html::user_mention(user_id_detect, &database_user.first_name.clone());
+    let before_username = html::user_mention(user_id_detect, &database_user.username.clone().unwrap_or(first_name));
+    let username_mention = html::user_mention(user_id_detect, &data.username.clone().unwrap_or_else(|| String::from("Ninguno")));
+    let first_name_mention = html::user_mention(user_id_detect, &data.first_name.clone());
+
+
+    if database_user.username != data.username {
+        let username_changed = format!("{before_username} cambió su username a {username_mention}");
         update_data(data.first_name, data.last_name, data.user_id, data.username).await?;
+        bot.send_message(msg.chat.id, username_changed).await.unwrap(); // Safe unwrap. Don't panic
+
+        return Ok(())
+    }
+
+    if database_user.first_name != data.first_name {
+        let first_name_changed = format!("{before_username} cambió su nombre de {before_first_name} a {first_name_mention}");
+        update_data(data.first_name, data.last_name, data.user_id, data.username).await?;
+        bot.send_message(msg.chat.id, first_name_changed).await.unwrap();
+
+        return Ok(())
+    }
+
+    if database_user.last_name != data.last_name {
+        let last_name_changed = format!("{username_mention} cambió su apellido de {} a {}", last_name.clone().unwrap_or_else(|| String::from("Ninguno")), last_name.unwrap_or_else(|| String::from("Ninguno")));
+        update_data(data.first_name, data.last_name, data.user_id, data.username).await?;
+        bot.send_message(msg.chat.id, last_name_changed).await.unwrap();
+
+        return Ok(())
     }
 
     Ok(())
@@ -74,9 +103,9 @@ pub async fn get_user_data(msg: Message) -> SurrealResult<()> {
 
 async fn update_data(
     first_name: String,
-    last_name: String,
+    last_name: Option<String>,
     user_id: String,
-    username: String
+    username: Option<String>
 ) -> SurrealResult<()> {
 
     // NO USAR FORMAT EN LAS QUERYS, EL MÉTODO BIND SE ENCARGA DE TOMAR VARIABLES A TRAVÉS DE `$`
@@ -97,8 +126,8 @@ async fn update_data(
 
 async fn update_backup(
     first_name: String,
-    last_name: String,
-    username: String,
+    last_name: Option<String>,
+    username: Option<String>,
     user_id: String
 ) -> SurrealResult<()> {
 
@@ -170,7 +199,7 @@ pub fn resolve_indirection(user: &str) -> (String, String, String) {
     (query, column.to_owned(), username)
 }
 
-pub fn delete_user_backup(user_id: String) -> Result<(), io::Error> {
+pub fn delete_user_backup(user_id: &str) -> Result<(), io::Error> {
     // Leer el contenido del archivo backup.json
     let mut file = File::open("backup.json")?;
     let mut contents = String::new();
