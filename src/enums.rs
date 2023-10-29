@@ -14,6 +14,7 @@ pub enum AdminCommands {
 pub enum BotCommonCommands {
     Start,
     Help,
+    Info,
 }
 
 #[derive(BotCommands, Clone, Debug)]

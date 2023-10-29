@@ -1,12 +1,7 @@
-use teloxide_core::{
-    payloads::SendMessageSetters,
-    prelude::{
-        Requester,
-        UserId
-    },
-    requests::ResponseResult,
-    types::Message
-};
+use teloxide_core::payloads::SendMessageSetters;
+use teloxide_core::requests::ResponseResult;
+use teloxide_core::types::Message;
+use teloxide_core::prelude::{Requester, UserId};
 use crate::error::{PermissionsDenied, handle_status, IdOrUsernameNotValid, handle_target_ban};
 use crate::prelude::Bot;
 use crate::utils::{MessageExt, Timer};
@@ -53,12 +48,12 @@ pub async fn banning(bot: Bot, msg: Message) -> ResponseResult<()> {
 
     // Ban for reply to a Join Event (/ban <user> Joined the group)
     let Some(user) = replied.from() else {
-        let Some(user) = msg.extract_first_new_member(&msg) else {
+        let Some(user) = msg.extract_new_member_info(&msg) else {
             return Ok(())
         };
 
         bot.ban_chat_member(msg.chat.id, user.id).await?;
-        bot.send_message(msg.chat.id, "✅ Usuario desbaneado")
+        bot.send_message(msg.chat.id, "✅ Usuario baneado")
             .reply_to_message_id(msg.id).await?
             .delete_message_timer(bot, msg.chat.id, msg.id, 10);
 

@@ -43,7 +43,7 @@ pub async fn unbanning(bot: Bot, msg: Message) -> ResponseResult<()> {
 
     // Unban for reply to a Join Event (/unban <user> Joined the group)
     let Some(user) = replied.from() else {
-        let Some(user) = msg.extract_first_new_member(&msg) else {
+        let Some(user) = msg.extract_new_member_info(&msg) else {
             return Ok(())
         };
 
