@@ -83,7 +83,7 @@ pub async fn fun_command_handler(
 ) -> ResponseResult<()> {
     let text = msg.text().unwrap_or_default();
     let Ok(FunCommands::Send) = BotCommands::parse(text, me.username()) else {
-        get_user_data(msg).await.unwrap_or_else(|e| {
+        get_user_data(bot, msg).await.unwrap_or_else(|e| {
             println!("Error al obtener los datos del usuario \n{e:#?}");
         });
         return Ok(())
