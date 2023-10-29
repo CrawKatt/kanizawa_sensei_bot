@@ -130,22 +130,7 @@ pub async fn load_data() -> SurrealResult<()> {
     for item in &data {
         // Insertar los datos en la base de datos
         let _created: Vec<Data> = DB.create("users").content(item).await?;
-        //println!("Usuarios pre-cargados: \n{created:#?}\n");
     }
 
     Ok(())
 }
-
-/*
-pub async fn get_user_data_command(bot: Bot, msg: Message) -> ResponseResult<()> {
-    let Some(replied) = msg.reply_to_message() else {
-        bot.send_message(msg.chat.id, "❌ No has respondido a ningún mensaje para obtener los datos del usuario").await?;
-        return Ok(())
-    };
-
-    let data = bot.get_chat_member(msg.chat.id, replied.from().unwrap().id).await?;
-    bot.send_message(msg.chat.id, format!("{data:#?}")).await?;
-
-    Ok(())
-}
-*/

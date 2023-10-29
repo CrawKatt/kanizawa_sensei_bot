@@ -33,12 +33,12 @@
 - [x] Añadir conexión a Base de Datos
   - [x] Añadir sistema de caché para la Base de Datos mediante JSON (pre-cargar la caché al iniciar el Bot)
 - [ ] Crear handler de Botones para el Bot
-- [ ] Crear la función del Bot que notifica si un usuario se ha cambiado el nombre, apellido o @username
-  - [ ] Por `first_name`
-  - [ ] Por `last_name`
-  - [ ] Por `@username`
-- [ ] Crear un comando de información para obtener la información de un usuario
-  - [ ] Por `first_name`
-  - [ ] Por `last_name`
-  - [ ] Por `@username`
+- [x] Crear la función del Bot que notifica si un usuario se ha cambiado el nombre, apellido o @username
+  - [x] Por `first_name`
+  - [x] Por `last_name`
+  - [x] Por `@username`
+- [x] Crear un comando de información para obtener la información de un usuario
+  - [x] Por `first_name`
+  - [x] Por `last_name`
+  - [x] Por `@username`
 - [ ] Crear una macro de logs para el Bot
