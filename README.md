@@ -14,6 +14,11 @@ This is a Telegram bot that can teach you the Rust programming language by easy 
 ## Usage
 
 * [Install Rust](https://www.rust-lang.org/es)
+    * Requires Rust Nightly Toolchain
+    ```
+    rustup toolchain install nightly
+    rustup default nightly
+    ```
 
 * Create a Telegram Bot mediant BotFather and obtain your bot token
 

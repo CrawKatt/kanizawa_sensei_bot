@@ -63,18 +63,16 @@ impl Timer for Message {
     }
 }
 
-#[async_trait::async_trait]
 pub trait MessageExt {
     async fn parse_id(&self) -> u64;
     fn extract_new_member_info<'user>(&'user self, msg: &'user Message) -> Option<&User>;
 }
 
-#[async_trait::async_trait]
 impl MessageExt for Message {
-    /// # Parse the message to get the user_id
-    /// Parse the message to get the user_id from:
+    /// # Parse the message to get the `user_id`
+    /// Parse the message to get the `user_id` from:
     /// - Reply to a Message
-    /// - Send a Message with @username or user_id as an argument (e.g. /ban @username, /ban 12345678)
+    /// - Send a Message with @username or `user_id` as an argument (e.g. /ban @username, /ban 12345678)
     async fn parse_id(&self) -> u64 {
         let Some(replied) = self.reply_to_message() else {
 
