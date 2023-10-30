@@ -1,16 +1,29 @@
-El tipo de dato `Result<T, E>` es un tipo de dato que puede ser alguno de dos valores: `Ok(T)` o `Err(E)`\.
+En Rust, el tipo `Result<T, E>` se utiliza para manejar errores de manera segura y controlada\.
+`Result<T, E>` es un tipo enum que tiene dos variantes: Ok y Err\.
 
 Ejemplo en Rust:
 
 ```rust
+use std::fs::File;
+use std::io::Read;
 
-fn result() -> Result<i32, &str> {
-    let valor: Result<i32, &str> = Ok(5);
-    let valor2: Result<i32, &str> = Err("Error");
-    valor
+fn read_file_contents(filename: &str) -> Result<String, std::io::Error> {
+    let mut file = File::open(filename)?;
+
+    let mut contents = String::new();
+    file.read_to_string(&mut contents)?;
+
+    Ok(contents)
 }
 
 fn main() {
-    result().expect("Ocurrió un error");
+    let result = read_file_contents("archivo.txt");
+
+    match result {
+        Ok(contents) => println!("Contenido del archivo: {}", contents),
+        Err(error) => eprintln!("Error: {}", error),
+    }
 }
 ```
+Consejo: En Rust no existen las excepciones como en otros lenguajes, por lo que el manejo de errores se realiza mediante el tipo `Result<T, E>`\.
+También podemos utilizar el operador `?` para propagar errores siempre y cuando los tipos que devuelve el Result de la función coincidan con los de nuestro tipo Result\.
