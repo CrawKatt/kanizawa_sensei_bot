@@ -10,6 +10,17 @@ use teloxide_core::types::{Message, MessageId, ChatMember, ChatMemberStatus, Use
 use crate::prelude::Bot;
 use crate::utils::db::{Data, DB, send_data, SurrealResult};
 
+trait UnwrapUserData {
+    fn unwrap_data(&self) -> String;
+}
+
+impl UnwrapUserData for Option<String> {
+    fn unwrap_data(&self) -> String {
+        self.as_ref().map_or_else(|| String::from("Ninguno"), std::clone::Clone::clone)
+    }
+}
+
+/// This Trait is used to check if a user is an Admin or Owner
 pub trait AdminOrOwner {
     fn is_admin(&self) -> bool;
     fn is_owner(&self) -> bool;
@@ -30,6 +41,8 @@ impl AdminOrOwner for ChatMember {
     }
 }
 
+/// This Trait is used to delete a message after
+/// a certain time specified by the method
 pub trait Timer {
     fn delete_message_timer(
         &self,
@@ -63,6 +76,9 @@ impl Timer for Message {
     }
 }
 
+/// This Trait is used to extract the `user_id` from a message
+/// and to extract the `user_id` from a reply to a message
+/// or from a Join Event
 pub trait MessageExt {
     async fn parse_id(&self) -> u64;
     fn extract_new_member_info<'user>(&'user self, msg: &'user Message) -> Option<&User>;
@@ -72,13 +88,16 @@ impl MessageExt for Message {
     /// # Parse the message to get the `user_id`
     /// Parse the message to get the `user_id` from:
     /// - Reply to a Message
-    /// - Send a Message with @username or `user_id` as an argument (e.g. /ban @username, /ban 12345678)
+    /// - Send a Message with @username or `user_id` as an argument **(e.g. /ban @username, /ban 12345678)**
+    ///
+    /// If the `user_id` is not found, return 404 from `unwrap_or_else` and print an error message
+    /// in the console
     async fn parse_id(&self) -> u64 {
         let Some(replied) = self.reply_to_message() else {
 
             // Get the user_id from the Database by @username
             let username_u64 = send_data(self.clone()).await.unwrap_or_else(|e| {
-                println!("Error al enviar los datos a la base de datos: send_data() {e:#?}");
+                println!("Error al enviar el user_id desde la base de datos: {e:#?}");
                 404
             });
 
@@ -87,16 +106,21 @@ impl MessageExt for Message {
                 .and_then(|text| text.split_once(' '))
                 .map(|(_, a)| a.trim())
                 .and_then(|trimmed| trimmed.parse::<u64>().ok())
-                .unwrap_or(username_u64);
+                .unwrap_or(username_u64); // If a user_id is not found, return the user_id associated with the @username.
         };
         replied.text().unwrap_or_default().parse::<u64>().unwrap_or(404)
     }
 
+    /// # Extract the `user_id` from a Join Event
+    /// Extract the `user_id` from a Join Event to use it in multiple commands
+    /// Lifetimes are used to avoid unnecessary copying
     fn extract_new_member_info<'user>(&'user self, msg: &'user Message) -> Option<&User> {
         msg.reply_to_message()?.new_chat_members()?.first()
     }
 }
 
+/// This function is used to save the data in a JSON file.
+/// (The data in `SurrealDB` is not persistent in Memory)
 async fn backup_data() -> SurrealResult<()> {
     // Seleccionar todos los datos de la tabla "users"
     let data: Vec<Data> = DB.select("users").await?;
@@ -113,6 +137,7 @@ async fn backup_data() -> SurrealResult<()> {
     Ok(())
 }
 
+/// This function is used to load data from a JSON file when starting the Bot.
 pub async fn load_data() -> SurrealResult<()> {
     DB.use_ns("teloxide-namespace").use_db("teloxide").await?;
 
@@ -127,7 +152,7 @@ pub async fn load_data() -> SurrealResult<()> {
 
     for item in &data {
         // Insertar los datos en la base de datos
-        let _created: Vec<Data> = DB.create("users").content(item).await?;
+        DB.create::<Vec<Data>>("users").content(item).await?;
     }
 
     Ok(())
