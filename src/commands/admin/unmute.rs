@@ -9,7 +9,7 @@ use crate::utils::{MessageExt, Timer};
 pub async fn unmuting(bot: Bot, msg: Message) -> ResponseResult<()> {
     let user_status = handle_status(&bot, &msg).await;
     let target_status = handle_target_mute(&bot, &msg).await;
-    if !target_status {
+    if target_status {
         bot.send_message(msg.chat.id, NotMuted)
             .reply_to_message_id(msg.id).await?
             .delete_message_timer(bot, msg.chat.id, msg.id, 10);
@@ -33,7 +33,7 @@ pub async fn unmuting(bot: Bot, msg: Message) -> ResponseResult<()> {
             return Ok(())
         }
         bot.restrict_chat_member(msg.chat.id, UserId(parsed_id),ChatPermissions::all()).await?;
-        bot.send_message(msg.chat.id, "✅ Usuario silenciado")
+        bot.send_message(msg.chat.id, "✅ Se ha removido el silencio")
             .reply_to_message_id(msg.id).await?
             .delete_message_timer(bot, msg.chat.id, msg.id, 10);
         return Ok(())
