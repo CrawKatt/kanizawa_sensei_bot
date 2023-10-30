@@ -10,7 +10,7 @@ pub use surrealdb::Result as SurrealResult;
 use teloxide::utils::html;
 use teloxide_core::prelude::Requester;
 use crate::prelude::Bot;
-use crate::utils::backup_data;
+use crate::utils::{backup_data, UnwrapUserData};
 
 pub static DB: Lazy<Surreal<Db>> = Lazy::new(Surreal::init);
 
@@ -69,8 +69,8 @@ pub async fn get_user_data(bot: Bot, msg: Message) -> SurrealResult<()> {
 
     let user_id_detect = user_id.parse::<i64>().unwrap_or_default();
     let before_first_name = html::user_mention(user_id_detect, &database_user.first_name.clone());
-    let before_username = html::user_mention(user_id_detect, &database_user.username.clone().unwrap_or(first_name));
-    let username_mention = html::user_mention(user_id_detect, &data.username.clone().unwrap_or_else(|| String::from("Ninguno")));
+    let before_username = html::user_mention(user_id_detect, &database_user.username.unwrap_data()); // This is a map_or_else in a Trait
+    let username_mention = html::user_mention(user_id_detect, &data.username.unwrap_data());
     let first_name_mention = html::user_mention(user_id_detect, &data.first_name.clone());
 
     if database_user.username != data.username {
@@ -90,7 +90,7 @@ pub async fn get_user_data(bot: Bot, msg: Message) -> SurrealResult<()> {
     }
 
     if database_user.last_name != data.last_name {
-        let last_name_changed = format!("{username_mention} cambió su apellido de {} a {}", last_name.clone().unwrap_or_else(|| String::from("Ninguno")), last_name.unwrap_or_else(|| String::from("Ninguno")));
+        let last_name_changed = format!("{username_mention} cambió su apellido de {} a {}", database_user.last_name.unwrap_data(), last_name.unwrap_data());
         update_data(data.first_name, data.last_name, data.user_id, data.username).await?;
         bot.send_message(msg.chat.id, last_name_changed).await.unwrap();
 
