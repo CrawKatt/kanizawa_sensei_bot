@@ -21,3 +21,4 @@ fn main() {
     println!("El área del rectángulo es: {}", rectangulo.area());
 }
 ```
+Consejo: En Rust, no existen las clases, pero se pueden simular con Struct + Impl\.

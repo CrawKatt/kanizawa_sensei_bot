@@ -2,10 +2,12 @@ Son grupos de sentencias o sentencias individuales que te permiten condicionar l
 
 Ejemplo en Rust:
 ```rust
-let color = "verde";
+fn main() {
+    let color = "Verde";
     if color == "Verde" {
-    println!("Puede continuar.");
+        println!("Puede continuar.");
     } else {
         println!("El color no es verde");
+    }
 }
 ```

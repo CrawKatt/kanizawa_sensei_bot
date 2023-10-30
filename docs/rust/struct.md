@@ -14,7 +14,6 @@ fn main() {
      alto: 50,
    };
 
-   println!("El área del rectángulo es: {}",
-   rectangulo.ancho * rectangulo.alto);
+   println!("El área del rectángulo es: {}", rectangulo.ancho * rectangulo.alto);
 }
 ```

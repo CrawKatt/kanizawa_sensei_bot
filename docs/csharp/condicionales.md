@@ -2,13 +2,21 @@ Son grupos de sentencias o sentencias individuales que te permiten condicionar l
 
 Ejemplo en C\#:
 ```cs
-    string color = "verde";
-    if (color == "Verde") 
+using System;
+
+class Program
+{
+    public static void Main(string[] args)
     {
-        Console.WriteLine("Puede continuar.");
+        string color = "Verde";
+    	if (color == "Verde") 
+    	{
+            Console.WriteLine("Puede continuar.");
+    	}
+    	else
+    	{
+            Console.WriteLine("El color no es verde");
+    	}
     }
-    else
-    {
-        Console.WriteLine("El color no es verde");
-    }
+}
 ```

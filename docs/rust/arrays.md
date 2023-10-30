@@ -3,7 +3,10 @@
 Ejemplo en Rust: 
 
 ```rust
-let array = [1, 2, 3, 4, 5];
+fn main() {
+    let array = [1, 2, 3, 4, 5];
+    println!("El contenido del array es: {:?}", array);
+}
 ```
 
 Consejo: En Rust, los Arrays se rigen por la regla de los índices\. A cada elemento le corresponde un índice y los índices comienzan en cero\. 

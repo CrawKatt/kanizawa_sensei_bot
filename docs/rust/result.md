@@ -3,8 +3,14 @@ El tipo de dato `Result<T, E>` es un tipo de dato que puede ser alguno de dos va
 Ejemplo en Rust:
 
 ```rust
-fn main() {
+
+fn result() -> Result<i32, &str> {
     let valor: Result<i32, &str> = Ok(5);
     let valor2: Result<i32, &str> = Err("Error");
+    valor
+}
+
+fn main() {
+    result().expect("Ocurrió un error");
 }
 ```

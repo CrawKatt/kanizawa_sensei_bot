@@ -73,7 +73,6 @@ pub async fn get_user_data(bot: Bot, msg: Message) -> SurrealResult<()> {
     let username_mention = html::user_mention(user_id_detect, &data.username.clone().unwrap_or_else(|| String::from("Ninguno")));
     let first_name_mention = html::user_mention(user_id_detect, &data.first_name.clone());
 
-
     if database_user.username != data.username {
         let username_changed = format!("{before_username} cambió su username a {username_mention}");
         update_data(data.first_name, data.last_name, data.user_id, data.username).await?;

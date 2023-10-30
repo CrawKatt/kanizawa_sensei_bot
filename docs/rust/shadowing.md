@@ -4,12 +4,13 @@ Ejemplo en Rust:
 
 ```rust
 fn main() { 
-    let x = 5; 
+    let x = 5;
+    println!("El valor de x es: {}", x);
 
     let x = x + 1; 
+    println!("El valor de x es: {}", x);
 
-    let x = x * 2; 
-
+    let x = x * 2;
     println!("El valor de x es: {}", x); 
 }
 ```
