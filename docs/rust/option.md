@@ -9,4 +9,17 @@ fn main() {
 }
 ```
 
-Consejo: En Rust, no existe el `Null` y se utiliza `None` para indicar que no hay valor\.
+Consejo: En Rust, no existe el `Null` y se utiliza `None` para indicar que no hay valor además de
+ser necesario desestructurar el valor antes de utilizarlo con otros tipos\.
+
+```rust
+fn main() {
+    let valor: Option<i32> = Some(5);
+    let valor2: i32 = 5;
+    
+    // Esto dará un error porque los tipos de datos no coinciden,
+    // no se puede sumar un Option<i32> con un i32
+    let suma = valor + valor2;
+    println!("El valor de la suma es: {}", suma);
+}
+```

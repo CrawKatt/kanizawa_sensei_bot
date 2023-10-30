@@ -4,10 +4,13 @@ Ejemplo en Rust:
 ```rust
 struct Generic<T> {
     valor: T,
-} 
+}
 
 fn main() {
-    let entero = Generico {valor: 5,};
-    let flotante = Generico {valor: 5.0,};
+    let entero = Generic {valor: 5,};
+    let flotante = Generic {valor: 5.0,};
+
+    println!("El valor entero es: {:?}", entero.valor);
+    println!("El valor flotante es: {:?}", flotante.valor);
 }
 ```

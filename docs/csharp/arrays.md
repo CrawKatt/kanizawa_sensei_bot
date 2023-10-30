@@ -3,7 +3,16 @@
 Ejemplo en C\#: 
 
 ```cs
-int[] array = new int[1, 2, 3, 4, 5];
+using System;
+
+class Program
+{
+    public static void Main(string[] args)
+    {
+        int[] array = new int[] {1, 2, 3, 4, 5};
+        Console.WriteLine(array[0]);
+    }
+}
 ```
 
 Consejo: En C\#, los Arrays son objetos y se rigen por la regla de los índices\. A cada elemento le corresponde un índice y los índices comienzan en cero\. 

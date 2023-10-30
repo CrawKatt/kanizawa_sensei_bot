@@ -4,7 +4,11 @@ En Rust, los Vectores se definen con la palabra reservada `vec!` y separando cad
 
 Ejemplo en Rust:
 ```rust
-let vector = vec![1, 2, 3, 4, 5];
+fn main() {
+    let vector = vec![1, 2, 3, 4, 5];
+    println!("El valor del vector es: {:?}", vector);
+}
+
 ```
 Consejo: En Rust, los Vectores se rigen por la regla de los índices\. A cada elemento le corresponde un índice y los índices comienzan en cero\.
 Si tomamos nuestro ejemplo el índice en dicho ejemplo es:

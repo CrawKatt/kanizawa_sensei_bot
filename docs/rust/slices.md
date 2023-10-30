@@ -4,10 +4,10 @@ Ejemplo en Rust:
 
 ```rust
 fn main() {
-    let slice = String::from("Hola, mundo");
+    let slice = String::from("Hola,  mundo");
 
     let hola = &slice[0..5];
-    let mundo = &slice[7..12];
+    let mundo = &slice[7..];
 
     println!("El valor de hola es: {}", hola);
     println!("El valor de mundo es: {}", mundo);

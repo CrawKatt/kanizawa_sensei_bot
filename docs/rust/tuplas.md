@@ -2,13 +2,17 @@ Las Tuplas son similares a los Arrays, pero con la diferencia de que pueden alma
 
 En Rust, las Tuplas se definen con paréntesis y separando cada dato con una coma \n\nEjemplo en Rust:
 ```rust
-let tupla = (1, 2, 3, 4, 5);
-`
+fn main() {
+    let tupla = (1, 2, 3, 4, 5);
+    println!("El valor de la tupla es: {:?}", tupla);
+}
+```
+
 Consejo: En Rust, las Tuplas se rigen por la regla de los índices\. 
 A cada elemento le corresponde un índice y los índices comienzan en cero\.
 
 Si tomamos nuestro ejemplo el índice en dicho ejemplo es:
-`
+```
 0 -> 1
 1 -> 2 
 2 -> 3

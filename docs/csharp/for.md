@@ -12,23 +12,31 @@ for (int i = 0; i < 3; i++)
 
 Ejemplo de algoritmo Fizz Buzz utilizando el ciclo for en C\#:
 ```cs
-for (int numero = 1; numero <= 101; numero++)
+using System;
+
+class Program
 {
-    if (numero % 3 == 0 && numero % 5 == 0)
+    public static void Main(string[] args)
     {
-        Console.WriteLine("Fizz Buzz");
-    }
-    else if (numero % 3 == 0)
-    {
-        Console.WriteLine("Fizz");
-    }
-    else if (numero % 5 == 0)
-    {
-        Console.WriteLine("Buzz");
-    }
-    else
-    {
-        Console.WriteLine(numero);
+		for (int numero = 1; numero <= 101; numero++)
+		{
+    		if (numero % 3 == 0 && numero % 5 == 0)
+    		{
+        		Console.WriteLine("Fizz Buzz");
+    		}
+    		else if (numero % 3 == 0)
+    		{
+        		Console.WriteLine("Fizz");
+    		}
+    		else if (numero % 5 == 0)
+    		{
+        		Console.WriteLine("Buzz");
+    		}
+    		else
+    		{
+        		Console.WriteLine(numero);
+    		}
+	    }
     }
 }
 ```

@@ -5,7 +5,6 @@ Con puntero haciendo referencia a la dirección de memoria\.
 
 
  ```python
-
 numero = 10
 
 print(type(numero))
@@ -23,10 +22,6 @@ print((numero))
 # Recordemos que en python las variables son instancias de clase
 # lo que hace python por detras es cambiar la referencia de memoria
 # y mover el puntero del valor hacia otra direccion.
-
-
-
-
 
  ```
 

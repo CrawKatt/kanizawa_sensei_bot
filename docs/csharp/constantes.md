@@ -3,5 +3,15 @@
 Ejemplo en C\#:
 
 ```cs
-const int MiConstante = 10;
+using System;
+
+class Program
+{
+    const int MiConstante = 10;
+	
+    public static void Main(string[] args)
+    {
+        Console.WriteLine(MiConstante);
+    }
+}
 ```

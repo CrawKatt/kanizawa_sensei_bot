@@ -4,11 +4,12 @@ Ejemplo en Rust:
 
 ```rust
 fn main() {
-   let s1 = String::from("Hola");
-   let s2 = s1;
-
-   println!("El valor de s1 es: {}", s1);
-   println!("El valor de s2 es: {}", s2);
+    let s1 = String::from("Hola");
+    let s2 = s1; // la propiedad de s1 es transferida a s2
+    
+    // Esto dará un error porque s2 tiene el ownership de la variable s1
+    println!("El valor de s1 es: {}", s1); 
+    println!("El valor de s2 es: {}", s2);
 }
 ```
 En este ejemplo, la variable s1 tiene el ownership del String "Hola"\.

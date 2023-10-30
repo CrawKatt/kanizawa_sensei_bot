@@ -2,8 +2,21 @@ Un Enum es un tipo que almacena diferentes variantes, almacena diferentes opcion
 
 Ejemplo en Rust:
 ```rust
-enum Response {
-    Sucess, // Se completó correctamente 
-    Error(u32, String), // Podemos indicar un código de Error a través de una Tupla 
+enum Color {
+    Red,
+    Green,
+    Blue,
+    Yellow,
+}
+
+fn main() {
+    let color = Color::Red;
+
+    match color {
+        Color::Red => println!("El color es rojo"),
+        Color::Green => println!("El color es verde"),
+        Color::Blue => println!("El color es azul"),
+        Color::Yellow => println!("El color es amarillo"),
+    }
 }
 ```
