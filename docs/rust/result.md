@@ -25,5 +25,6 @@ fn main() {
     }
 }
 ```
-Consejo: En Rust no existen las excepciones como en otros lenguajes, por lo que el manejo de errores se realiza mediante el tipo `Result<T, E>`\.
-También podemos utilizar el operador `?` para propagar errores siempre y cuando los tipos que devuelve el Result de la función coincidan con los de nuestro tipo Result\.
+Consejo: En Rust no existen las excepciones como en otros lenguajes, por lo que el manejo de errores se realiza mediante el tipo `Result<T, E>` donde `T` es un Genérico
+que devuvelve la función y `E` es el tipo de error que devuelve la función si algo salió mal\.
+También podemos utilizar el operador `?` para propagar errores siempre y cuando los tipos de datos que devuelven el Result de la función coincidan con los de nuestro tipo Result\.
