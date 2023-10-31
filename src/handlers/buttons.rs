@@ -65,12 +65,13 @@ pub async fn help_action(bot: Bot, msg: Message) -> ResponseResult<()> {
 
     Ok(())
 }
-
+/*
 pub fn make_unban_keyboard() -> InlineKeyboardMarkup {
     let callback_data = "Desbanear".to_owned();
     let keyboard = vec![vec![InlineKeyboardButton::callback("Desbanear", callback_data)]];
     InlineKeyboardMarkup::new(keyboard)
 }
+*/
 
 pub fn make_unmute_keyboard(user_id: UserId) -> InlineKeyboardMarkup {
     let callback_data = format!("Desbanear_{user_id}");
