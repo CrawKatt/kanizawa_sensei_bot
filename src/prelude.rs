@@ -19,6 +19,7 @@ use teloxide_core::{
         Update,
     },
 };
+use crate::handlers::buttons::callback_handler;
 
 pub type Bot = DefaultParseMode<teloxide::Bot>;
 
@@ -29,6 +30,7 @@ pub async fn run() {
             //eprintln!("Update: {u:#?}");
         })
         .branch(Update::filter_message().endpoint(common_command_handler))
+        .branch(Update::filter_callback_query().endpoint(callback_handler))
         .branch(
             Update::filter_chat_member()
                 .branch(

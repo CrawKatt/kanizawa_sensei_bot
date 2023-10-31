@@ -2,6 +2,8 @@ use crate::{prelude::Bot, utils::Timer};
 use teloxide_core::{payloads::SendMessageSetters, prelude::Requester, requests::ResponseResult};
 use teloxide_core::types::{Message, ParseMode::MarkdownV2};
 use teloxide_core::prelude::UserId;
+use crate::handlers::buttons::create_button;
+use crate::handlers::buttons::help_action;
 use crate::utils::MessageExt;
 
 pub async fn handle_docs(
@@ -39,15 +41,13 @@ pub async fn handle_docs(
 }
 
 pub async fn help(bot: Bot, msg: Message) -> ResponseResult<()> {
-    bot.send_message(msg.chat.id, "Todo").await?
-        .delete_message_timer(bot, msg.chat.id, msg.id, 5);
+    help_action(bot, msg).await?;
 
     Ok(())
 }
 
 pub async fn start(bot: Bot, msg: Message) -> ResponseResult<()> {
-    bot.send_message(msg.chat.id, "Todo").await?
-        .delete_message_timer(bot, msg.chat.id, msg.id, 5);
+    create_button(bot, msg).await?;
 
     Ok(())
 }
