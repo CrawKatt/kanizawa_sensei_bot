@@ -16,7 +16,7 @@ trait UnwrapUserData {
 
 impl UnwrapUserData for Option<String> {
     fn unwrap_data(&self) -> String {
-        self.as_ref().map_or_else(|| String::from("Ninguno"), std::clone::Clone::clone)
+        self.as_ref().map_or_else(|| String::from("Ninguno"), |_| String::new())
     }
 }
 
@@ -96,7 +96,7 @@ impl MessageExt for Message {
         let Some(replied) = self.reply_to_message() else {
 
             // Get the user_id from the Database by @username
-            let username_u64 = send_data(self.clone()).await.unwrap_or_else(|e| {
+            let username_u64 = send_data(self).await.unwrap_or_else(|e| {
                 println!("Error al enviar el user_id desde la base de datos: {e:#?}");
                 404
             });

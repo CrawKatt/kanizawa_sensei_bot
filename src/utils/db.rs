@@ -14,7 +14,7 @@ use crate::utils::{backup_data, UnwrapUserData};
 
 pub static DB: Lazy<Surreal<Db>> = Lazy::new(Surreal::init);
 
-#[derive(Serialize, Deserialize, Clone, Default, PartialEq, Eq)]
+#[derive(Serialize, Deserialize, PartialEq, Eq)]
 pub struct Data {
     pub first_name: String,
     pub last_name: Option<String>, // Es Option<String> pero se requiere tipo String para evitar guardar Some("last_name") en la base de datos
@@ -33,18 +33,20 @@ pub async fn get_user_data(bot: Bot, msg: Message) -> SurrealResult<()> {
         return Ok(())
     };
 
-    // Se usa `.clone()` ya que `.to_string()` aplica `.to_owned()` que a su vez aplica `.clone()` internamente
-    let first_name = user.first_name.clone();
-    let last_name = user.last_name.clone();
+    let first_name = &user.first_name;
+    let last_name = &user.last_name;
     let user_id = user.id.to_string();
-    let username = user.username.clone();
+    let username = &user.username;
+
+    let struct_last_name = last_name.as_ref().map(String::as_str).unwrap_or_default().to_string();
+    let struct_username = username.as_ref().map(String::as_str).unwrap_or_default().to_string();
 
     // Obtener los datos del usuario que envió el mensaje
     let data = Data {
-        first_name: first_name.clone(),
-        last_name: last_name.clone(),
-        user_id: user_id.clone(), // El user_id debe ser almacenado como String para evitar Overflow
-        username,
+        first_name: first_name.to_string(),
+        last_name: Some(struct_last_name),
+        user_id: user_id.to_string(), // El user_id debe ser almacenado como String para evitar Overflow
+        username: Some(struct_username),
     };
 
     // NO USAR FORMAT EN LAS QUERYS, EL MÉTODO BIND SE ENCARGA DE TOMAR VARIABLES A TRAVÉS DE `$`
@@ -68,14 +70,14 @@ pub async fn get_user_data(bot: Bot, msg: Message) -> SurrealResult<()> {
     }
 
     let user_id_detect = user_id.parse::<i64>().unwrap_or_default();
-    let before_first_name = html::user_mention(user_id_detect, &database_user.first_name.clone());
+    let before_first_name = html::user_mention(user_id_detect, &database_user.first_name);
     let before_username = html::user_mention(user_id_detect, &database_user.username.unwrap_data()); // This is a map_or_else in a Trait
     let username_mention = html::user_mention(user_id_detect, &data.username.unwrap_data());
-    let first_name_mention = html::user_mention(user_id_detect, &data.first_name.clone());
+    let first_name_mention = html::user_mention(user_id_detect, &data.first_name);
 
     if database_user.username != data.username {
         let username_changed = format!("{before_username} cambió su username a {username_mention}");
-        update_data(data.first_name, data.last_name, data.user_id, data.username).await?;
+        update_data(&data.first_name, &data.last_name, data.user_id, data.username).await?;
         bot.send_message(msg.chat.id, username_changed).await.unwrap(); // Safe unwrap. Don't panic
 
         return Ok(())
@@ -83,7 +85,7 @@ pub async fn get_user_data(bot: Bot, msg: Message) -> SurrealResult<()> {
 
     if database_user.first_name != data.first_name {
         let first_name_changed = format!("{before_username} cambió su nombre de {before_first_name} a {first_name_mention}");
-        update_data(data.first_name, data.last_name, data.user_id, data.username).await?;
+        update_data(&data.first_name, &data.last_name, data.user_id, data.username).await?;
         bot.send_message(msg.chat.id, first_name_changed).await.unwrap();
 
         return Ok(())
@@ -91,7 +93,7 @@ pub async fn get_user_data(bot: Bot, msg: Message) -> SurrealResult<()> {
 
     if database_user.last_name != data.last_name {
         let last_name_changed = format!("{username_mention} cambió su apellido de {} a {}", database_user.last_name.unwrap_data(), last_name.unwrap_data());
-        update_data(data.first_name, data.last_name, data.user_id, data.username).await?;
+        update_data(&data.first_name, &data.last_name, data.user_id, data.username).await?;
         bot.send_message(msg.chat.id, last_name_changed).await.unwrap();
 
         return Ok(())
@@ -101,8 +103,8 @@ pub async fn get_user_data(bot: Bot, msg: Message) -> SurrealResult<()> {
 }
 
 async fn update_data(
-    first_name: String,
-    last_name: Option<String>,
+    first_name: &String,
+    last_name: &Option<String>,
     user_id: String,
     username: Option<String>
 ) -> SurrealResult<()> {
@@ -112,22 +114,22 @@ async fn update_data(
 
     // Cuando se actualiza o se requiere más de un solo dato, utilizar múltiples binds para cada dato
     DB.query(sql_query)
-        .bind(("first_name", first_name.clone()))
-        .bind(("last_name", last_name.clone()))
-        .bind(("username", username.clone()))
-        .bind(("user_id", user_id.clone()))
+        .bind(("first_name", first_name))
+        .bind(("last_name", last_name))
+        .bind(("username", &username))
+        .bind(("user_id", &user_id))
         .await?;
 
-    update_backup(first_name, last_name, username, user_id).await?;
+    update_backup(first_name, last_name, &username, &user_id).await?;
 
     Ok(())
 }
 
 async fn update_backup(
-    first_name: String,
-    last_name: Option<String>,
-    username: Option<String>,
-    user_id: String
+    first_name: &String,
+    last_name: &Option<String>,
+    username: &Option<String>,
+    user_id: &String
 ) -> SurrealResult<()> {
 
     // Seleccionar todos los datos de la tabla "users"
@@ -143,10 +145,10 @@ async fn update_backup(
 
     // Buscar el usuario correspondiente en Vec<Data> y actualizar los campos
     for user in &mut backup_data {
-        if user.user_id == user_id {
-            user.username = username;
-            user.first_name = first_name;
-            user.last_name = last_name;
+        if user.user_id == *user_id {
+            user.username = username.to_owned();
+            user.first_name = first_name.to_owned();
+            user.last_name = last_name.to_owned();
             break;
         }
     }
@@ -164,7 +166,7 @@ async fn update_backup(
 // Todo: armar custom error para cuando no le pases un argumento valido al comando, si estas 100%
 // seguro que el comando `/ban {algo}` siempre va a tener {algo} no esta mal usar unwrap, a eso se
 // lo considera safety si la API te lo asegura
-pub async fn send_data(msg: Message) -> SurrealResult<u64> {
+pub async fn send_data(msg: &Message) -> SurrealResult<u64> {
     let Some(text) = msg.text() else { return Ok(0) };
     let (query, column, username) = resolve_indirection(text);
     let user: Option<Data> = DB
@@ -172,7 +174,7 @@ pub async fn send_data(msg: Message) -> SurrealResult<u64> {
         .bind((column, username)) // pasar el valor
         .await?
         .take(0)?; // take(0) requiere un Option<T> para funcionar
-    let user = user.unwrap_or_default(); // variable user para parsear el user_id
+    let user = user.unwrap(); // variable user para parsear el user_id
     let user_id = user.user_id.parse::<u64>().unwrap_or_default(); // parsear el user_id a u64
 
     Ok(user_id)
