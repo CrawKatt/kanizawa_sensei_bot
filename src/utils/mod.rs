@@ -20,6 +20,12 @@ impl UnwrapUserData for Option<String> {
     }
 }
 
+impl UnwrapUserData for Option<&str> {
+    fn unwrap_data(&self) -> String {
+        self.map_or_else(|| String::from("Ninguno"), |_| String::new())
+    }
+}
+
 /// This Trait is used to check if a user is an Admin or Owner
 pub trait AdminOrOwner {
     fn is_admin(&self) -> bool;
