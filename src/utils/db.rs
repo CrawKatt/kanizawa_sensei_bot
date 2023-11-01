@@ -38,15 +38,17 @@ pub async fn get_user_data(bot: Bot, msg: Message) -> SurrealResult<()> {
     let user_id = user.id.to_string();
     let username = &user.username;
 
-    let struct_last_name = last_name.as_ref().map(String::as_str).unwrap_or_default().to_string();
-    let struct_username = username.as_ref().map(String::as_str).unwrap_or_default().to_string();
+    let struct_first_name = first_name.to_string();
+    let struct_last_name = Some(last_name.as_ref().map(String::as_str).unwrap_data());
+    let struct_user_id = user_id.to_string(); // El user_id debe ser almacenado como String para evitar Overflow
+    let struct_username = Some(username.as_ref().map(String::as_str).unwrap_data());
 
     // Obtener los datos del usuario que envió el mensaje
     let data = Data {
-        first_name: first_name.to_string(),
-        last_name: Some(struct_last_name),
-        user_id: user_id.to_string(), // El user_id debe ser almacenado como String para evitar Overflow
-        username: Some(struct_username),
+        first_name: struct_first_name,
+        last_name: struct_last_name,
+        user_id: struct_user_id,
+        username: struct_username,
     };
 
     // NO USAR FORMAT EN LAS QUERYS, EL MÉTODO BIND SE ENCARGA DE TOMAR VARIABLES A TRAVÉS DE `$`
