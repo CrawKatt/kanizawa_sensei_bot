@@ -15,6 +15,7 @@ pub enum BotCommonCommands {
     Start,
     Help,
     Info,
+    Report,
 }
 
 #[derive(BotCommands, Clone, Debug)]

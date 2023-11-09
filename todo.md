@@ -25,6 +25,7 @@
       - [x] `por user_id`
       - [x] `por @username`
       - [x] `por first_name`
+- [x] Crear un comando `/report` para reportar a un usuario
 - [x] Añadir comandos de docs para Lenguajes de Programación
   - [x] `Rust` 
   - [x] `C#`
@@ -32,7 +33,7 @@
 - [ ] Añadir y mejorar docs para comandos de C#
 - [x] Añadir conexión a Base de Datos
   - [x] Añadir sistema de caché para la Base de Datos mediante JSON (pre-cargar la caché al iniciar el Bot)
-- [ ] Crear handler de Botones para el Bot
+- [x] Crear handler de Botones para el Bot
 - [x] Crear la función del Bot que notifica si un usuario se ha cambiado el nombre, apellido o @username
   - [x] Por `first_name`
   - [x] Por `last_name`
