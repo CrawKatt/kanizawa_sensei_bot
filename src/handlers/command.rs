@@ -1,31 +1,14 @@
-use crate::{
-    commands::{
-        common::{
-            handle_docs,
-            start,
-            help
-        },
-        fun::send,
-        admin::{
-            ban::banning,
-            unban::unbanning,
-            mute::muting,
-            unmute::unmuting,
-        },
-    },
-    enums::{
-        AdminCommands,
-        BotCommonCommands,
-        DocsCommands,
-        FunCommands,
-    },
-    prelude::Bot,
-};
 use teloxide::utils::command::BotCommands;
 use teloxide_core:: types::{Me, Message};
 use teloxide_core::requests::ResponseResult;
-use crate::commands::common::info;
+
+use crate::prelude::Bot;
+use crate::commands::common::{info, report};
 use crate::utils::db::get_user_data;
+use crate::enums::{AdminCommands, BotCommonCommands, DocsCommands, FunCommands};
+use crate::commands::admin::{ban::banning, unban::unbanning, mute::muting, unmute::unmuting};
+use crate::commands::common::{handle_docs, start, help};
+use crate::commands::fun::send;
 
 pub async fn common_command_handler(
     bot: Bot,
@@ -37,6 +20,7 @@ pub async fn common_command_handler(
         Ok(BotCommonCommands::Start) => start(bot, msg).await?,
         Ok(BotCommonCommands::Help) => help(bot, msg).await?,
         Ok(BotCommonCommands::Info) => info(bot, msg).await?,
+        Ok(BotCommonCommands::Report) => report(bot, msg).await?,
         _ => docs_command_handler(bot, msg, me).await?,
     }
 

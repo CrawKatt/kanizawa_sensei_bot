@@ -1,10 +1,11 @@
-use crate::{prelude::Bot, utils::Timer};
-use teloxide_core::{payloads::SendMessageSetters, prelude::Requester, requests::ResponseResult};
-use teloxide_core::types::{Message, ParseMode::MarkdownV2};
 use teloxide_core::prelude::UserId;
-use crate::handlers::buttons::create_button;
-use crate::handlers::buttons::help_action;
+use teloxide_core::types::{Message, ParseMode::MarkdownV2};
+use teloxide_core::{payloads::SendMessageSetters, prelude::Requester, requests::ResponseResult};
+
 use crate::utils::MessageExt;
+use crate::handlers::buttons::help_action;
+use crate::handlers::buttons::create_button;
+use crate::{prelude::Bot, utils::Timer};
 
 pub async fn handle_docs(
     bot: Bot,
@@ -84,6 +85,36 @@ pub async fn info(bot: Bot, msg: Message) -> ResponseResult<()> {
     bot.send_message(msg.chat.id, user_info)
         .reply_to_message_id(msg.id).await?
         .delete_message_timer(bot, msg.chat.id, msg.id, 60);
+
+    Ok(())
+}
+
+pub async fn report(bot: Bot, msg: Message) -> ResponseResult<()> {
+    let Some(replied) = msg.reply_to_message() else {
+        bot.send_message(msg.chat.id, "Debes responder a un mensaje para reportarlo")
+            .reply_to_message_id(msg.id).await?
+            .delete_message_timer(bot, msg.chat.id, msg.id, 10);
+
+        return Ok(())
+    };
+
+    let user_id = replied.from().map_or_else(|| replied.new_chat_members().unwrap_or_default().first().unwrap().id, |user| user.id);
+    bot.send_message(msg.chat.id, format!("{user_id} Reportado a los Administradores"))
+        .reply_to_message_id(msg.id).await?;
+
+    let admins = bot.get_chat_administrators(msg.chat.id).await?;
+    for admin in admins {
+        if admin.user.is_bot {
+            continue;
+        }
+
+        let group_name = msg.chat.username().unwrap_or_default();
+        let group_title = msg.chat.title().unwrap_or_default();
+        let group_id = replied.id;
+        let link = format!("<a href=\"https://t.me/{group_name}/{group_id}\">Se ha solicitado la ayuda de un administrador en {group_title}</a>");
+
+        bot.send_message(admin.user.id, link).await?;
+    }
 
     Ok(())
 }
