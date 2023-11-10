@@ -1,6 +1,6 @@
 use teloxide_core::prelude::UserId;
 use teloxide_core::types::{Message, ParseMode::MarkdownV2};
-use teloxide_core::{payloads::SendMessageSetters, prelude::Requester, requests::ResponseResult};
+use teloxide_core::{payloads::SendMessageSetters, prelude::Requester, RequestError, requests::ResponseResult};
 
 use crate::utils::MessageExt;
 use crate::handlers::buttons::help_action;
@@ -113,7 +113,14 @@ pub async fn report(bot: Bot, msg: Message) -> ResponseResult<()> {
         let group_id = replied.id;
         let link = format!("<a href=\"https://t.me/{group_name}/{group_id}\">Se ha solicitado la ayuda de un administrador en {group_title}</a>");
 
-        bot.send_message(admin.user.id, link).await?;
+        let result = bot.send_message(admin.user.id, link).await;
+
+        let Err(err) = result else { continue; };
+        let RequestError::Api(api_error) = &err else { return Err(err); };
+
+        if api_error.to_string().contains("bot can't initiate conversation with a user") {
+            continue;
+        }
     }
 
     Ok(())
